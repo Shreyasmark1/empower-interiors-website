@@ -1,142 +1,36 @@
-# empower-interiors-website
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-table strcuture:
+## Getting Started
 
-CREATE TABLE categories (
-    id              BIGSERIAL PRIMARY KEY,
-    parent_id       BIGINT REFERENCES categories(id) ON DELETE RESTRICT,
+First, run the development server:
 
-    name            VARCHAR(255) NOT NULL,
-    slug            VARCHAR(255) NOT NULL,
-    description     TEXT,
-    image           TEXT,
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-    sort_order      INTEGER NOT NULL DEFAULT 0,
-    is_active       BOOLEAN NOT NULL DEFAULT TRUE,
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-    UNIQUE(parent_id, slug)
-);
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-CREATE INDEX idx_categories_parent_id
-    ON categories(parent_id);
+## Learn More
 
+To learn more about Next.js, take a look at the following resources:
 
-CREATE TABLE products (
-    id              BIGSERIAL PRIMARY KEY,
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-    name            VARCHAR(500) NOT NULL,
-    slug            VARCHAR(500) NOT NULL UNIQUE,
-    description     TEXT,
-    thumbnail       TEXT,
-    min_price       NUMERIC(12, 2),
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-    specifications  JSONB NOT NULL DEFAULT '{}',
+## Deploy on Vercel
 
-    is_active       BOOLEAN NOT NULL DEFAULT TRUE,
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-
-CREATE TABLE product_categories (
-    product_id      BIGINT NOT NULL
-        REFERENCES products(id) ON DELETE CASCADE,
-
-    category_id     BIGINT NOT NULL
-        REFERENCES categories(id) ON DELETE CASCADE,
-
-    PRIMARY KEY (product_id, category_id)
-);
-
-CREATE INDEX idx_product_categories_category_id
-    ON product_categories(category_id);
-
-
-CREATE TABLE variants (
-    id              BIGSERIAL PRIMARY KEY,
-
-    product_id      BIGINT NOT NULL
-        REFERENCES products(id) ON DELETE CASCADE,
-
-    name            VARCHAR(255) NOT NULL,
-    images          TEXT[] NOT NULL DEFAULT '{}',
-    price           NUMERIC(12, 2) NOT NULL,
-
-    sort_order      INTEGER NOT NULL DEFAULT 0,
-    is_active       BOOLEAN NOT NULL DEFAULT TRUE,
-
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX idx_variants_product_id
-    ON variants(product_id);
-
-
-CREATE TABLE promotions (
-    id              BIGSERIAL PRIMARY KEY,
-
-    name            VARCHAR(255) NOT NULL,
-
-    title           VARCHAR(500),
-    description     TEXT,
-
-    image           TEXT,
-    mobile_image    TEXT,
-
-    link_url        TEXT,
-    button_text     VARCHAR(100),
-
-    starts_at       TIMESTAMPTZ,
-    ends_at         TIMESTAMPTZ,
-
-    is_active       BOOLEAN NOT NULL DEFAULT TRUE,
-    sort_order      INTEGER NOT NULL DEFAULT 0,
-
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX idx_promotions_active_dates
-    ON promotions(is_active, starts_at, ends_at);
-
-
-CREATE TABLE promotion_targets (
-    id              BIGSERIAL PRIMARY KEY,
-
-    promotion_id    BIGINT NOT NULL
-        REFERENCES promotions(id) ON DELETE CASCADE,
-
-    target_type     VARCHAR(30) NOT NULL,
-
-    category_id     BIGINT
-        REFERENCES categories(id) ON DELETE CASCADE,
-
-    product_id      BIGINT
-        REFERENCES products(id) ON DELETE CASCADE,
-
-    placement       VARCHAR(50) NOT NULL,
-
-    sort_order      INTEGER NOT NULL DEFAULT 0,
-
-    CHECK (
-        target_type IN ('homepage', 'category', 'product')
-    ),
-
-    CHECK (
-        placement IN ('hero', 'banner', 'section')
-    )
-);
-
-CREATE INDEX idx_promotion_targets_promotion_id
-    ON promotion_targets(promotion_id);
-
-CREATE INDEX idx_promotion_targets_category_id
-    ON promotion_targets(category_id);
-
-CREATE INDEX idx_promotion_targets_product_id
-    ON promotion_targets(product_id);
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
