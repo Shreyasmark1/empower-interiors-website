@@ -24,7 +24,7 @@ export const Default: Story = {
 
 export const WithLabel: Story = {
   render: (args) => (
-    <div className="flex w-[320px] flex-col gap-2">
+    <div className="flex w-80 flex-col gap-2">
       <label className="text-sm font-medium" htmlFor="sb-search">
         Search
       </label>
