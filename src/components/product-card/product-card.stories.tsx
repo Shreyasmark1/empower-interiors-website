@@ -1,93 +1,90 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { expect, fn, userEvent, within } from 'storybook/test'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import type { Product } from '@/lib/schemas'
-import { ProductCard } from './product-card'
-
-const product: Product = {
-  id: 'p1',
-  name: 'Arcadia Lounge Chair',
-  category: 'Seating',
-  price: 18499,
-  wasPrice: 22999,
-  status: 'inStock',
-}
+import { ProductCard } from "./product-card"
 
 const meta = {
-  title: 'Demos/ProductCard',
+  title: "Furnish/ProductCard",
   component: ProductCard,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
+  argTypes: {
+    name: { control: "text" },
+    brand: { control: "text" },
+    image: { control: "text" },
+    price: { control: "number" },
+    wasPrice: { control: "number" },
+    discountPercent: { control: "number" },
+    rating: { control: "number" },
+    ratingCount: { control: "number" },
+    assured: { control: "boolean" },
+    warrantyLabel: { control: "text" },
+    emiStarting: { control: "text" },
+    wishlisted: { control: "boolean" },
+    onWishlistToggle: { action: "wishlist-toggled" },
+  },
   args: {
-    product,
+    name: "Lem Velvet 3 Seater Sofa in Teal Blue Colour",
+    brand: "By Casacraft from Pepperfry",
+    image: "https://picsum.photos/seed/product-sofa/420/520",
+    price: 28499,
+    wasPrice: 55999,
+    rating: 5,
+    ratingCount: 421,
+    assured: true,
+    warrantyLabel: "12-Month Warranty Available",
+    emiStarting: "₹1,369/month",
+    colors: [
+      { color: "Teal Blue", swatch: "#0f766e" },
+      { color: "Rust", swatch: "#c2410c" },
+      { color: "Charcoal", swatch: "#374151" },
+      { color: "Burgundy", swatch: "#7f1d1d" },
+      { color: "Moss", swatch: "#3f6212" },
+      { color: "Blush", swatch: "#db2777" },
+    ],
+    wishlisted: false,
   },
 } satisfies Meta<typeof ProductCard>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const InStock: Story = {
-  render: () => (
-    <div className="w-[280px]">
-      <ProductCard product={product} />
-    </div>
-  ),
-}
+export const Default: Story = {}
 
-export const NewArrival: Story = {
-  render: () => (
-    <div className="w-[280px]">
-      <ProductCard
-        product={{ ...product, id: 'p2', name: 'Bora Oak Dining Table', wasPrice: undefined, status: 'newArrival' }}
-      />
-    </div>
-  ),
-}
-
-export const SoldOut: Story = {
-  render: () => (
-    <div className="w-[280px]">
-      <ProductCard
-        product={{ ...product, id: 'p3', name: 'Mira Velvet Sofa', wasPrice: undefined, status: 'soldOut' }}
-      />
-    </div>
-  ),
-}
-
-const onAddSpy = fn()
-
-export const AddToCart: Story = {
-  render: () => (
-    <div className="w-[280px]">
-      <ProductCard product={product} onAdd={onAddSpy} />
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await userEvent.click(canvas.getByRole('button', { name: 'Add to Cart' }))
-    await expect(onAddSpy).toHaveBeenCalledWith(product)
+export const Wishlisted: Story = {
+  args: {
+    wishlisted: true,
   },
 }
 
-export const ProductGrid: Story = {
-  name: 'Responsive grid (1/2/3/4 cols)',
-  parameters: { layout: 'fullscreen' },
-  render: () => (
-    <div
-      style={{ width: '100%', minHeight: '100vh', padding: '24px' }}
-      className="bg-(--bg-page)"
-    >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <ProductCard product={product} />
-        <ProductCard
-          product={{ ...product, id: 'p4', name: 'Lumen Floor Lamp', price: 7499, status: 'inStock' }}
-        />
-        <ProductCard
-          product={{ ...product, id: 'p5', name: 'Nova Sideboard', price: 28999, status: 'newArrival' }}
-        />
-        <ProductCard
-          product={{ ...product, id: 'p6', name: 'Halo Pendant Light', price: 9999, wasPrice: undefined, status: 'soldOut' }}
-        />
-      </div>
-    </div>
-  ),
+export const NoWarranty: Story = {
+  args: {
+    warrantyLabel: undefined,
+  },
+}
+
+export const NotAssured: Story = {
+  args: {
+    assured: false,
+  },
+}
+
+export const NoDiscount: Story = {
+  args: {
+    wasPrice: undefined,
+    discountPercent: 0,
+  },
+}
+
+export const LongName: Story = {
+  args: {
+    name: "Premium Teal Velvet Upholstered 3 Seater Lounge Sofa with Solid Oak Wood Frame and Silver Legs",
+  },
+}
+
+export const OnlyTwoColors: Story = {
+  args: {
+    colors: [
+      { color: "Teal Blue", swatch: "#0f766e" },
+      { color: "Rust", swatch: "#c2410c" },
+    ],
+  },
 }

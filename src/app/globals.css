@@ -107,11 +107,12 @@
   --bg-brand-gradient: linear-gradient(135deg, #570054 0%, #9e1b97 100%);
   --bg-banner-gradient: linear-gradient(180deg, #9e1b97 0%, #570054 100%);
   --bg-hero-gradient: linear-gradient(
-    180deg,
+    123deg,
     #570054 0%,
     #9e1b97 50%,
     #ff5e36 100%
   );
+  --bg-logo-gradient: linear-gradient(123deg, #ff0085 20%, #ff5a00 100%);
   --bg-surface-gradient: linear-gradient(180deg, #fdfbfd 0%, #f3e8f2 100%);
   --bg-dark-overlay: linear-gradient(
     180deg,

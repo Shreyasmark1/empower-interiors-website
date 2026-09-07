@@ -124,11 +124,13 @@ function Header({
             className,
           )}
         >
-          <Logo className="shrink-0 text-2xl" />
+         
 
           <div className="min-w-0 px-4">
             <SearchBar />
           </div>
+
+           <Logo className="shrink-0 text-2xl" />
 
           <HeaderActions
             className="justify-self-end"

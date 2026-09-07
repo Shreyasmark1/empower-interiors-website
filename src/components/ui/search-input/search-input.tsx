@@ -15,7 +15,7 @@ function SearchInput({ className, ...props }: React.ComponentProps<"input">) {
       <Input
         type="search"
         className={cn(
-          "w-full min-w-0 pl-10 focus-visible:pl-10 aria-invalid:pl-10",
+          "bg-transparent border-none focus-visible:border-0 focus-visible:shadow-none max-w-full min-w-0 pl-10 focus-visible:pl-10 aria-invalid:pl-10",
           className,
         )}
         {...props}

@@ -32,7 +32,7 @@ function PromoBanner({
     <div
       role="banner"
       className={cn(
-        "bg-(image:--bg-banner-gradient) flex items-center justify-center py-3 text-xm font-medium tracking-wide text-white",
+        "bg-(image:--bg-logo-gradient) flex items-center justify-center py-3 text-xm font-medium tracking-wide text-white",
         className,
       )}
     >

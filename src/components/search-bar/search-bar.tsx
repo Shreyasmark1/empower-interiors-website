@@ -120,7 +120,7 @@ export function SearchWithDropdown({
       <SearchInput
         id={inputId}
         value={query}
-        className="flex-1 "
+        className="flex-1 border-b-2 outline-none bg-transparent"
         placeholder={placeholder}
         onChange={(event) => {
           setQuery(event.target.value);
@@ -130,8 +130,9 @@ export function SearchWithDropdown({
         onKeyDown={handleKeyDown}
       />
 
+
       {isOpen ? (
-        <div className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden rounded-md border border-border bg-popover shadow-md">
+        <div className="absolute top-full left-0 right-0 z-50 overflow-hidden rounded-md border border-border bg-popover shadow-md">
           {!hasQuery ? (
             <>
               {recentSearches.length > 0 && (
@@ -238,6 +239,6 @@ export function SearchWithDropdown({
           )}
         </div>
       ) : null}
-    </div>
+    </div> //main div
   );
 }

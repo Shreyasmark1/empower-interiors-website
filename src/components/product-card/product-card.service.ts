@@ -1,55 +1,43 @@
-import {
-  AddToCartInput,
-  AddToCartInputSchema,
-  CartItem,
-  CartItemSchema,
-  Product,
-  ProductSchema,
-} from "@/lib/schemas";
+import type { ProductCardProps } from "./product-card"
 
-type MockProductData = Omit<Product, "status"> & { status?: Product["status"] };
+type AddToCartResult = Promise<{ ok: boolean; productId: string }>
 
-const catalogSeed: MockProductData[] = [
-  { id: "p1", name: "Arcadia Lounge Chair", category: "Seating", price: 18499, wasPrice: 22999 },
-  { id: "p2", name: "Bora Oak Dining Table", category: "Dining", price: 32999, status: "newArrival" },
-  { id: "p3", name: "Mira Velvet Sofa", category: "Seating", price: 54999, status: "soldOut" },
-  { id: "p4", name: "Lumen Floor Lamp", category: "Lighting", price: 7499 },
-];
+const CART_KEYS: Record<"added" | "wishlist", string> = {
+  added: "empower.cart.productIds",
+  wishlist: "empower.wishlist.productIds",
+}
 
-const catalog: Product[] = catalogSeed.map((product) => ProductSchema.parse(product));
+function readIds(key: string): string[] {
+  if (typeof window === "undefined") return []
+  try {
+    const raw = window.localStorage.getItem(key)
+    return raw ? (JSON.parse(raw) as string[]) : []
+  } catch {
+    return []
+  }
+}
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+function writeIds(key: string, ids: string[]) {
+  if (typeof window === "undefined") return
+  window.localStorage.setItem(key, JSON.stringify(ids))
+}
 
-const cart: CartItem[] = [];
-let nextCartId = 1;
-
-export const cartService = {
-  async addToCart(input: AddToCartInput): Promise<CartItem> {
-    await delay(200);
-    const { productId, quantity } = AddToCartInputSchema.parse(input);
-    const existing = cart.find((item) => item.productId === productId);
-    if (existing) {
-      existing.quantity = Math.min(99, existing.quantity + quantity);
-      return existing;
-    }
-    const item = CartItemSchema.parse({
-      id: `ci_${nextCartId++}`,
-      productId,
-      quantity,
-    });
-    cart.push(item);
-    return item;
+export const productCardService = {
+  async addToCart(product: ProductCardProps): AddToCartResult {
+    const productId = product.name
+    const ids = Array.from(new Set([...readIds(CART_KEYS.added), productId]))
+    writeIds(CART_KEYS.added, ids)
+    return Promise.resolve({ ok: true, productId })
   },
 
-  async getCartItems(): Promise<CartItem[]> {
-    await delay(200);
-    return cart.map((item) => CartItemSchema.parse(item));
+  async toggleWishlist(product: ProductCardProps): Promise<boolean> {
+    const productId = product.name
+    const ids = readIds(CART_KEYS.wishlist)
+    const wished = ids.includes(productId)
+    writeIds(
+      CART_KEYS.wishlist,
+      wished ? ids.filter((id) => id !== productId) : [...ids, productId]
+    )
+    return Promise.resolve(!wished)
   },
-
-  async listProducts(): Promise<Product[]> {
-    await delay(200);
-    return catalog.map((product) => ProductSchema.parse(product));
-  },
-};
-
-export type { CartItem, Product } from "@/lib/schemas";
+}
