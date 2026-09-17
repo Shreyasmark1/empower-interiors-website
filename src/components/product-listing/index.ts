@@ -1,0 +1,6 @@
+export { ProductListingView } from "./product-listing"
+export type { ProductListingViewProps } from "./product-listing"
+export { ResultCount } from "./result-count"
+export type { ResultCountProps } from "./result-count"
+export { productListingService } from "./product-listing.service"
+export { mockCatalog } from "./product-listing.mock"

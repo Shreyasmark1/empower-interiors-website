@@ -60,7 +60,7 @@ function ProductCard({
   return (
     <div className={cn("group flex h-full w-full flex-col gap-3", className)}>
       {/* Media */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-md bg-plum-5">
+      <div className="relative aspect-4/5 w-full overflow-hidden rounded-md bg-plum-5">
         <Image
           src={image}
           alt={name}
@@ -89,7 +89,7 @@ function ProductCard({
           />
         </button>
       </div>
-
+          <div className="p-3">
       {/* Variant indicator */}
       {colors.length > 0 && (
         <div className="flex items-center gap-1.5">
@@ -162,6 +162,8 @@ function ProductCard({
             EMI starting from {emiStarting}
           </p>
         )}
+      </div>
+
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ const NavItemSchema = z.object({
   label: z.string().min(1),
   href: z.string().min(1),
   badge: z.string().optional(),
+  description: z.string().optional(),
 });
 
 const NavGroupSchema = z.object({
@@ -13,6 +14,7 @@ const NavGroupSchema = z.object({
   items: z.array(NavItemSchema),
   imageUrl: z.string().optional(),
   href: z.string().optional(),
+  description: z.string().optional(),
 });
 
 const PromoBannerSchema = z.object({
@@ -29,6 +31,7 @@ const MainCategorySchema = z.object({
   slug: z.string().min(1),
   groups: z.array(NavGroupSchema),
   promoBanners: z.array(PromoBannerSchema),
+  description: z.string().optional(),
 });
 
 const NavigationSchema = z.array(MainCategorySchema);
