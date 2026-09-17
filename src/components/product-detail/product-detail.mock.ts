@@ -1,0 +1,221 @@
+import type { ProductDetailRaw } from "@/lib/schemas"
+
+export const mockProductDetailPages: ProductDetailRaw[] = [
+  {
+    slug: "lem-velvet-3-seater-sofa",
+    name: "Lem Velvet 3 Seater Sofa in Teal Blue Colour",
+    shortDescription:
+      "A low-slung, feather-soft sink-in sofa with hand-piped seams and solid teak legs.",
+    description:
+      "The Lem is the sofa your living room has been waiting for — a deep, wrap-around seat that swallows you whole while keeping a crisp, tailored silhouette.\n\nThe channels are hand-quilted from a stain-resistant teal velvet that reads opulent in daylight and moody after dark, while the kiln-dried hardwood frame is engineered to outlast a decade of Sunday couch naps.\n\nWe deliver fully assembled, style it with your cushions and carry the packaging away on the way out.",
+    brand: "Casacraft",
+    category: "Seating",
+    roomType: "Living Room",
+    price: 28499,
+    wasPrice: 55999,
+    priceDisplay: "₹28,499",
+    emiText: "EMI starting from ₹1,369/month",
+    availability: "inStock",
+    shippingInfo: "Ships in 4-6 days",
+    warrantyLabel: "12-Month Warranty Available",
+    specifications: {
+      Colour: "Teal Blue Velvet",
+      Material: "Velvet + Kiln-dried Teak",
+      "Seating Capacity": "3 Seater",
+      Weight: "56 kg",
+      Assembly: "Free doorstep installation",
+    },
+    dimensions: {
+      width: "210 cm",
+      depth: "92 cm",
+      height: "82 cm",
+      weight: "56 kg",
+    },
+    materials:
+      "Stain-resistant teal velvet (polyester blend)\nKiln-dried solid teak frame\nHigh-resilience foam with feather-blend cushioning\nRecycled-metal anti-sag springs",
+    careInstructions:
+      "Vacuum cushions weekly with a soft brush nozzle\nBlot spills immediately with a dry white cloth\nProfessional steam clean once a year\nKeep away from direct sunlight to prevent fading",
+    deliveryInfo:
+      "Free delivery across Mangalore, Bangalore and all metro cities\n109-point quality check before dispatch\nShips fully assembled in custom packaging",
+    installationInfo:
+      "Two-person installation team arrives within your chosen window\nLegs levelling and wall-anchor assessment included\nStyle setup with your existing cushions\nPackaging removed and recycled on site",
+    relatedProducts: [
+      {
+        slug: "sloane-2-seater-sofa",
+        name: "Sloane 2 Seater Sofa",
+        brand: "Casacraft",
+        category: "Seating",
+        roomType: "Living Room",
+        price: 21999,
+        wasPrice: 39999,
+        priceDisplay: "₹21,999",
+      },
+      {
+        slug: "mira-grass-armchair",
+        name: "Mira Cane Armchair",
+        brand: "Woodsworth",
+        category: "Seating",
+        roomType: "Reading Corner",
+        price: 12999,
+        wasPrice: 18999,
+        priceDisplay: "₹12,999",
+      },
+      {
+        slug: "ivy-coffee-table",
+        name: "Ivy Round Coffee Table",
+        brand: "Woodsworth",
+        category: "Decor",
+        roomType: "Living Room",
+        price: 8499,
+        priceDisplay: "₹8,499",
+      },
+      {
+        slug: "harlow-fabric-lounge",
+        name: "Harlow Fabric Lounge Chair",
+        brand: "Casacraft",
+        category: "Seating",
+        roomType: "Living Room",
+        price: 15999,
+        wasPrice: 21999,
+        priceDisplay: "₹15,999",
+      },
+    ],
+  },
+  {
+    slug: "rustic-wood-dining-table",
+    name: "Rustic Sheesham Wood 6 Seater Dining Table",
+    shortDescription:
+      "A statement trestle table hewn from solid sheesham with a live-edge plank top.",
+    description:
+      "Gather around the Brindavan — a 6-seater that treats every dinner like a festival.\n\nSolid sheesham's dramatic grain and natural oils give each table a one-of-one pattern, finished with a low-VOC lacquer that shrugs off heat rings and coffee spills.\n\nThe chunky trestle base not only anchors the piece visually, it leaves legroom for every diner, even at full capacity.",
+    brand: "Woodsworth",
+    category: "Dining",
+    roomType: "Dining Room",
+    price: 32999,
+    wasPrice: 52999,
+    priceDisplay: "₹32,999",
+    emiText: "EMI starting from ₹1,587/month",
+    availability: "lowStock",
+    shippingInfo: "Ships in 7-9 days",
+    warrantyLabel: "12-Month Warranty Available",
+    specifications: {
+      Material: "Solid Sheesham Wood",
+      Finish: "Natural Honey Lacquer",
+      "Seating Capacity": "6 Seater",
+      Weight: "74 kg",
+    },
+    dimensions: {
+      width: "180 cm",
+      depth: "90 cm",
+      height: "76 cm",
+      weight: "74 kg",
+    },
+    materials:
+      "Solid sheesham (dalbergia sissoo)\nLow-VOC honey lacquer finish\nMortise-and-tenon joins",
+    careInstructions:
+      "Wipe with a soft damp cloth and dry immediately\nUse coasters and trivets for hot and wet items\nOil the surface twice a year with teak oil",
+    deliveryInfo:
+      "Free delivery across Karnataka and all metros\nTelescopic packaging protects corners in transit",
+    installationInfo:
+      "Comes flat-packed in 3 pieces\nOn-site assembly by our trained team\nTop levelled and legs tightened before handover",
+    relatedProducts: [
+      {
+        slug: "nook-bench",
+        name: "Nook Upholstered Bench",
+        brand: "Woodsworth",
+        category: "Dining",
+        roomType: "Dining Room",
+        price: 7499,
+        priceDisplay: "₹7,499",
+      },
+      {
+        slug: "ember-hanging-lamp",
+        name: "Ember Pendant Lamp",
+        brand: "Lume",
+        category: "Lighting",
+        roomType: "Dining Room",
+        price: 4299,
+        wasPrice: 5999,
+        priceDisplay: "₹4,299",
+      },
+      {
+        slug: "maari-sideboard",
+        name: "Maari 4-Door Sideboard",
+        brand: "Woodsworth",
+        category: "Storage",
+        roomType: "Dining Room",
+        price: 27499,
+        wasPrice: 37999,
+        priceDisplay: "₹27,499",
+      },
+    ],
+  },
+  {
+    slug: "cloud-king-bed",
+    name: "Cloud King Size Upholstered Bed",
+    shortDescription:
+      "A floating-headboard bed with a whisper-quiet slat system and plush channel tufting.",
+    description:
+      "The Cloud bed is engineered for the eight hours that matter most.\n\nIts quilted, rounded headboard is angled ever so slightly forward, so reading in bed stops being an awkward lean. Beneath the mattress, a reinforced flexi-slat deck distributes weight evenly and eliminates squeaks, even after a decade.\n\nButtons are reinforced and the fabric is anti-snag for those with restless pets.",
+    brand: "Slumberland",
+    category: "Storage",
+    roomType: "Bedroom",
+    price: 44999,
+    wasPrice: 64999,
+    priceDisplay: "₹44,999",
+    emiText: "EMI starting from ₹2,162/month",
+    availability: "inStock",
+    shippingInfo: "Ships in 6-8 days",
+    warrantyLabel: "24-Month Warranty Available",
+    specifications: {
+      Size: "King (183 × 198 × 112 cm)",
+      Material: "Linen-blend Fabric Upholstery",
+      Frame: "Solid Wood + Flexi-Slat Deck",
+      Weight: "68 kg",
+    },
+    dimensions: {
+      width: "198 cm",
+      depth: "226 cm",
+      height: "112 cm",
+      weight: "68 kg",
+    },
+    materials:
+      "Breathable linen-blend upholstery\nSolid pine frame\nFlexi-slat deck with central support legs",
+    careInstructions:
+      "Plump cushions and smooth the quilt weekly\nVacuum with an upholstery attachment only\nRotate the mattress monthly",
+    deliveryInfo:
+      "White-glove delivery with room-of-choice placement\nFree inside-city delivery in 40+ cities",
+    installationInfo:
+      "Frame assembled at your bedside\nSlat system fitted and squeak-tested\nOld mattress removal on request",
+    relatedProducts: [
+      {
+        slug: "dusk-nightstand",
+        name: "Dusk Nightstand",
+        brand: "Slumberland",
+        category: "Storage",
+        roomType: "Bedroom",
+        price: 6499,
+        priceDisplay: "₹6,499",
+      },
+      {
+        slug: "dreambox-storage-ottoman",
+        name: "Dreambox Storage Ottoman",
+        brand: "Slumberland",
+        category: "Storage",
+        roomType: "Bedroom",
+        price: 8999,
+        wasPrice: 12499,
+        priceDisplay: "₹8,999",
+      },
+      {
+        slug: "luci-bedside-lamp",
+        name: "Luci Brass Bedside Lamp",
+        brand: "Lume",
+        category: "Lighting",
+        roomType: "Bedroom",
+        price: 3499,
+        priceDisplay: "₹3,499",
+      },
+    ],
+  },
+]
