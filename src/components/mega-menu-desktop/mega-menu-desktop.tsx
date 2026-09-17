@@ -15,7 +15,7 @@ function PromoCard({ banner }: { banner: PromoBanner }) {
   return (
     <Link
       href={banner.ctaUrl}
-      className="group relative block h-[340px] flex-[0_0_240px] overflow-hidden rounded-lg"
+      className="group relative block h-[340px] w-full overflow-hidden rounded-lg"
       onClick={() => {}}
     >
       <Image
@@ -112,6 +112,12 @@ function MegaMenuDesktop({ className }: { className?: string }) {
 
   const activeCategory = categories.find((c) => c.id === activeId);
   const promoBanners = (activeCategory?.promoBanners ?? []).slice(0, 2);
+  const listColClass =
+    promoBanners.length === 0
+      ? "col-span-9"
+      : promoBanners.length === 1
+        ? "col-span-7"
+        : "col-span-5";
 
   if (categories.length === 0) return null;
 
@@ -127,34 +133,34 @@ function MegaMenuDesktop({ className }: { className?: string }) {
       {/* Nav bar */}
       <Container>
         <nav className="flex w-full items-center justify-center gap-0 px-4 sm:px-6 lg:px-8">
-        {categories.map((cat) => (
-          <div
-            key={cat.id}
-            className="relative"
-            onMouseEnter={() => handleCategoryEnter(cat.id)}
-            onMouseLeave={handleCategoryLeave}
-          >
-            <Link
-              href={`/${cat.slug}`}
-              className={cn(
-                "relative px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center",
-                activeId === cat.id
-                  ? "text-brand"
-                  : "text-foreground hover:text-brand",
-              )}
-              onClick={() => {
-                setIsOpen(false);
-                setActiveId(null);
-              }}
+          {categories.map((cat) => (
+            <div
+              key={cat.id}
+              className="relative"
+              onMouseEnter={() => handleCategoryEnter(cat.id)}
+              onMouseLeave={handleCategoryLeave}
             >
-              {cat.name}
-              {activeId === cat.id && isOpen ? (
-                <span className="absolute inset-x-4 -bottom-[1px] h-0.5 bg-brand" />
-              ) : null}
-            </Link>
-          </div>
-        ))}
-      </nav>
+              <Link
+                href={`/${cat.slug}`}
+                className={cn(
+                  "relative px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center",
+                  activeId === cat.id
+                    ? "text-brand"
+                    : "text-foreground hover:text-brand",
+                )}
+                onClick={() => {
+                  setIsOpen(false);
+                  setActiveId(null);
+                }}
+              >
+                {cat.name}
+                {activeId === cat.id && isOpen ? (
+                  <span className="absolute inset-x-4 -bottom-[1px] h-0.5 bg-brand" />
+                ) : null}
+              </Link>
+            </div>
+          ))}
+        </nav>
       </Container>
 
       {/* Dropdown drawer — full height below the nav trigger */}
@@ -170,14 +176,26 @@ function MegaMenuDesktop({ className }: { className?: string }) {
 
           {/* Panel constrained to the site container width */}
           <Container className="relative h-full">
-            <div className="box-border flex h-full w-full max-w-full flex-row bg-background px-8 py-6 shadow-2xl">
-              {/* Link columns — fill remaining space, distribute equally */}
-              <div className="flex flex-auto justify-between gap-8 pr-8">
+            <div className="box-border grid h-full w-full max-w-full grid-cols-9 grid-rows-1 gap-8 overflow-y-auto bg-background shadow-2xl">
+              {/* Link columns — 9/7/5 columns; fixed 5 tracks per row, excess wraps */}
+              <div className={`${listColClass} grid grid-rows-1 grid-cols-5 gap-5`}>
                 {activeCategory.groups.map((group) => (
-                  <div key={group.id} className="min-w-0 flex-[1_1_0px]">
-                    <h3 className="mb-3 text-sm font-bold text-foreground">
-                      {group.title}
-                    </h3>
+                  <div key={group.id} className="min-w-0 p-5 odd:bg-muted">
+                    <Link
+                      href={
+                        group.href ??
+                        `/${activeCategory.slug}/${group.title.toLowerCase().replace(/\s+/g, "-")}`
+                      }
+                      className="mb-3 block"
+                      onClick={() => {
+                        setIsOpen(false);
+                        setActiveId(null);
+                      }}
+                    >
+                      <h3 className="text-sm font-bold text-foreground transition-colors hover:text-brand">
+                        {group.title}
+                      </h3>
+                    </Link>
                     <ul className="flex flex-col gap-2">
                       {group.items.map((item) => (
                         <li key={item.id}>
@@ -190,11 +208,11 @@ function MegaMenuDesktop({ className }: { className?: string }) {
                             }}
                           >
                             {item.label}
-                            {item.badge ? (
+                            {/* {item.badge ? (
                               <span className="inline-flex items-center rounded-full bg-brand/10 px-1.5 py-0.5 text-[10px] font-semibold text-brand">
                                 {item.badge}
                               </span>
-                            ) : null}
+                            ) : null} */}
                           </Link>
                         </li>
                       ))}
@@ -203,17 +221,15 @@ function MegaMenuDesktop({ className }: { className?: string }) {
                 ))}
               </div>
 
-              {/* Promo panel — fixed-size cards, held right against the columns */}
-              {promoBanners.length > 0 ? (
-                <div className="flex flex-shrink-0 gap-4">
-                  {promoBanners.map((banner, i) => (
-                    <PromoCard
-                      key={`${activeCategory.id}-promo-${i}`}
-                      banner={banner}
-                    />
-                  ))}
+              {/* Promo cards — each spans 2 of the 9 grid columns */}
+              {promoBanners.map((banner, i) => (
+                <div
+                  key={`${activeCategory.id}-promo-${i}`}
+                  className="col-span-2 pr-8 pt-6"
+                >
+                  <PromoCard banner={banner} />
                 </div>
-              ) : null}
+              ))}
             </div>
           </Container>
         </div>
