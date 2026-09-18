@@ -9,7 +9,7 @@ type ListingHeaderProps = {
 function ListingHeader({ title, description, className }: ListingHeaderProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center", className)}>
-      <h1 className="text-2xl font-semibold bg-(image:--bg-logo-gradient) text-transparent bg-clip-text sm:text-3xl">
+      <h1 className="text-2xl italic bg-(image:--bg-logo-gradient) text-transparent bg-clip-text sm:text-3xl">
         {title}
       </h1>
       {description ? (
