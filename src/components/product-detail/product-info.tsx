@@ -1,16 +1,23 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
-import { Phone } from "lucide-react"
+import { Heart, Minus, Phone, Plus } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { productCardService } from "@/components/product-card/product-card.service"
 import type { ProductDetailInfo } from "@/lib/schemas"
+import { toast } from "@/lib/toasts"
+import { cn } from "@/lib/utils"
 import {
   buildConsultationHref,
   buildWhatsAppHref,
   CONTACT,
+  DEFAULT_TAXES_TEXT,
   TRUST_POINTS,
 } from "./product-detail.constants"
+import { CheckAvailability } from "./check-availability"
+import { VariantSelector } from "./variant-selector"
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -22,27 +29,123 @@ function WhatsAppIcon({ className }: { className?: string }) {
 
 type ProductInfoProps = {
   product: ProductDetailInfo
+  activeVariantId?: string
+  onVariantChange: (id: string) => void
   className?: string
 }
 
-function ProductInfo({ product, className }: ProductInfoProps) {
+function QuantityStepper({
+  value,
+  onChange,
+}: {
+  value: number
+  onChange: (next: number) => void
+}) {
+  return (
+    <div className="flex h-12 shrink-0 items-stretch overflow-hidden rounded-lg border border-border bg-surface-alt">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        disabled={value <= 1}
+        onClick={() => onChange(value - 1)}
+        className="grid w-11 place-items-center text-muted-foreground transition-colors hover:bg-plum-5 hover:text-foreground disabled:opacity-40"
+      >
+        <Minus className="size-4" strokeWidth={1.5} />
+      </button>
+      <span
+        aria-live="polite"
+        className="grid w-11 place-items-center border-x border-border text-sm font-medium"
+      >
+        {value}
+      </span>
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={() => onChange(value + 1)}
+        className="grid w-11 place-items-center text-muted-foreground transition-colors hover:bg-plum-5 hover:text-foreground"
+      >
+        <Plus className="size-4" strokeWidth={1.5} />
+      </button>
+    </div>
+  )
+}
+
+function ProductInfo({
+  product,
+  activeVariantId,
+  onVariantChange,
+  className,
+}: ProductInfoProps) {
+  const [quantity, setQuantity] = React.useState(1)
+  const [wished, setWished] = React.useState(false)
   const toneClass =
     product.availabilityTone === "green" ? "bg-[#16a34a]" : "bg-amber-500"
 
+  const selectedVariant = product.variants.find((variant) => variant.id === activeVariantId)
+  const price = selectedVariant?.price ?? product.price
+  const discount = product.wasPrice
+    ? Math.round((1 - product.price / product.wasPrice) * 100)
+    : 0
+
+  async function onAddToCart() {
+    await productCardService.addToCart({
+      name: product.name,
+      image: product.gallery[0]?.imageSrc ?? "",
+      price,
+      wasPrice: product.wasPrice,
+    })
+    toast.success(`${product.name} added to your cart`)
+  }
+
+  async function onWishlistToggle() {
+    const nowWished = await productCardService.toggleWishlist({
+      name: product.name,
+      image: product.gallery[0]?.imageSrc ?? "",
+      price,
+    })
+    setWished(nowWished)
+    toast.success(nowWished ? "Saved to wishlist" : "Removed from wishlist")
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)}>
-      {/* Eyebrow + title */}
+      {/* Eyebrow + title + badges + wishlist */}
       <div className="flex flex-col gap-2">
-        <p className="text-[0.6875rem] font-semibold tracking-[0.32em] text-brand-magenta uppercase">
-          {product.category}
-        </p>
-        <h1 className="text-3xl leading-tight font-semibold text-foreground lg:text-4xl">
+        <div className="flex items-center gap-2">
+          <p className="text-[0.6875rem] font-semibold tracking-[0.32em] text-brand-magenta uppercase">
+            {product.roomType} Collection
+          </p>
+          <div className="flex items-center gap-1.5">
+            {product.badges.includes("new") && (
+              <Badge variant="newArrival">New</Badge>
+            )}
+            {product.badges.includes("bestseller") && (
+              <Badge className="bg-brand-magenta text-white">Bestseller</Badge>
+            )}
+          </div>
+          <button
+            type="button"
+            aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+            aria-pressed={wished}
+            onClick={onWishlistToggle}
+            className="ml-auto grid size-9 place-items-center rounded-full transition-all duration-200 hover:bg-plum-5"
+          >
+            <Heart
+              className={cn(
+                "size-5 transition-colors",
+                wished ? "fill-brand-coral text-brand-coral" : "text-muted-foreground"
+              )}
+              strokeWidth={1.5}
+            />
+          </button>
+        </div>
+        <h1 className="text-[clamp(1.625rem,3vw,2.25rem)] leading-tight font-extralight text-foreground">
           {product.name}
         </h1>
         {product.brand && (
           <p className="text-sm text-muted-foreground">By {product.brand}</p>
         )}
-        <p className="mt-2 max-w-[32rem] leading-relaxed text-muted-foreground">
+        <p className="mt-1 max-w-[32rem] text-[0.9375rem] leading-relaxed text-muted-foreground">
           {product.shortDescription}
         </p>
       </div>
@@ -50,7 +153,7 @@ function ProductInfo({ product, className }: ProductInfoProps) {
       {/* Price card */}
       <div className="flex flex-col gap-3 rounded-xl bg-plum-5 p-4">
         <div className="flex flex-wrap items-baseline gap-2">
-          <span className="text-3xl font-bold text-foreground">
+          <span className="text-4xl font-extralight text-foreground">
             {product.priceDisplay}
           </span>
           {product.wasPrice && (
@@ -62,45 +165,90 @@ function ProductInfo({ product, className }: ProductInfoProps) {
               })}
             </span>
           )}
+          {discount > 0 && <Badge variant="discount">{discount}% OFF</Badge>}
         </div>
-        <p className="text-sm text-muted-foreground">{product.emiText}</p>
+        {price !== product.price && (
+          <p className="text-sm text-foreground">
+            Selected variant price:{" "}
+            {price.toLocaleString("en-IN", {
+              style: "currency",
+              currency: "INR",
+              maximumFractionDigits: 0,
+            })}
+          </p>
+        )}
+        <p className="text-sm font-medium text-brand-magenta">{product.emiText}</p>
         <div className="border-t border-border pt-3">
           <span className="flex items-center gap-2 text-sm font-medium text-foreground">
             <span className={cn("size-2.5 rounded-full", toneClass)} />
             {product.availabilityLabel}
+            <span className="text-muted-foreground">
+              · Ships in {product.shippingInfo}
+            </span>
           </span>
-          <p className="mt-1 text-sm text-muted-foreground">{product.shippingInfo}</p>
+          {product.taxesText || DEFAULT_TAXES_TEXT ? (
+            <p className="mt-1 text-[0.6875rem] tracking-[0.12em] text-muted-foreground uppercase">
+              {product.taxesText ?? DEFAULT_TAXES_TEXT}
+            </p>
+          ) : null}
         </div>
       </div>
 
-      {/* CTAs */}
-      <div className="flex flex-col gap-3">
+      <VariantSelector
+        variants={product.variants}
+        value={activeVariantId}
+        onChange={onVariantChange}
+      />
+
+      <CheckAvailability />
+
+      {/* CTA stack — sticky bottom bar on mobile, inline on laptop */}
+      <div
+        className={cn(
+          "flex flex-col gap-3 px-6 py-3",
+          "sticky bottom-0 z-20 -mx-6 border-t bg-white/92 backdrop-blur-lg",
+          "lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none"
+        )}
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <div className="flex gap-2">
+          <QuantityStepper value={quantity} onChange={setQuantity} />
+          <button
+            type="button"
+            onClick={onAddToCart}
+            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-brand text-white shadow-[0_10px_30px_rgba(87,0,84,0.28)] transition-all duration-200 hover:bg-brand-magenta"
+          >
+            Add to Cart
+          </button>
+        </div>
         <a
           href={buildWhatsAppHref(product.name, product.roomType)}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#22c55e] text-white shadow-[0_10px_30px_rgba(34,197,94,0.32)] transition-colors duration-200 hover:bg-[#16a34a]"
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#22c55e] text-white shadow-[0_10px_30px_rgba(34,197,94,0.32)] transition-all duration-200 hover:bg-[#16a34a]"
         >
           <WhatsAppIcon className="size-5" />
           Chat on WhatsApp
         </a>
-        <Link
-          href={buildConsultationHref(product.slug, product.roomType)}
-          className="flex h-12 w-full items-center justify-center rounded-lg bg-brand-magenta text-white shadow-[0_10px_30px_rgba(87,0,84,0.28)] transition-colors duration-200 hover:bg-brand"
-        >
-          Book a Free Consultation
-        </Link>
-        <a
-          href={CONTACT.telHref}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-lg border-[1.5px] border-primary bg-transparent text-primary transition-colors duration-200 hover:bg-[rgba(87,0,84,0.06)]"
-        >
-          <Phone className="size-5" />
-          {CONTACT.phoneDisplay}
-        </a>
+        <div className="flex gap-2">
+          <Link
+            href={buildConsultationHref(product.slug, product.roomType)}
+            className="flex h-12 flex-1 items-center justify-center rounded-lg bg-brand-magenta text-white transition-all duration-200 hover:bg-brand"
+          >
+            Get Free Consultation
+          </Link>
+          <a
+            href={CONTACT.telHref}
+            aria-label={`Call us at ${CONTACT.phoneDisplay}`}
+            className="grid h-12 min-w-12 items-center justify-center gap-2 rounded-lg border-[1.5px] border-primary text-primary transition-colors duration-200 hover:bg-[rgba(87,0,84,0.06)]"
+          >
+            <Phone className="size-5" strokeWidth={1.5} />
+          </a>
+        </div>
       </div>
 
       {/* Trust row */}
-      <div className="border-t border-border pt-5">
+      <div className="border-t border-border pt-4">
         <ul className="flex flex-wrap items-center gap-x-2 gap-y-1">
           {TRUST_POINTS.map((point, i) => (
             <li key={point} className="flex items-center gap-2 text-sm">

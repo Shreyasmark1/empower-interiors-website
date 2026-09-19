@@ -9,6 +9,8 @@ const meta = {
   tags: ["autodocs"],
   args: {
     product: SOFA,
+    activeVariantId: SOFA.variants[0]?.id,
+    onVariantChange: () => {},
   },
 } satisfies Meta<typeof ProductInfo>
 

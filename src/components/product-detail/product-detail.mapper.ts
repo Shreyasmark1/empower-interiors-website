@@ -1,6 +1,5 @@
 import {
   AVAILABILITY_META,
-  FEATURE_ICONS,
   GALLERY_GRADIENTS,
   GALLERY_LABELS,
   SHARED_FEATURES,
@@ -49,6 +48,20 @@ export function toProductDetail(raw: ProductDetailRaw): ProductDetailInfo {
     shippingInfo: raw.shippingInfo,
     warrantyLabel: raw.warrantyLabel,
     gallery: toGallery(raw),
+    variants: raw.variants.map((variant) => ({
+      id: variant.id,
+      name: variant.name,
+      swatch: variant.swatch,
+      images: variant.images,
+      ...(variant.price != null ? { price: variant.price } : {}),
+    })),
+    badges: raw.badges,
+    categoryPath: raw.categoryPath?.length ? raw.categoryPath : [raw.category, raw.roomType],
+    taxesText: raw.taxesText,
+    has360: raw.has360,
+    has3d: raw.has3d,
+    frames: raw.frames,
+    modelUrl: raw.modelUrl,
     specifications: Object.entries(raw.specifications).map(([label, value]) => ({
       label,
       value,
@@ -62,7 +75,6 @@ export function toProductDetail(raw: ProductDetailRaw): ProductDetailInfo {
       title: feature.title,
       description: feature.description,
       iconKey: feature.iconKey,
-      icon: FEATURE_ICONS[feature.iconKey],
     })),
   }
 }
@@ -71,9 +83,13 @@ export function toRelatedProductCard(raw: RelatedProductRaw) {
   const discount = raw.wasPrice ? Math.round((1 - raw.price / raw.wasPrice) * 100) : 0
 
   return {
+    slug: raw.slug,
     name: raw.name,
     brand: raw.brand ? `By ${raw.brand}` : undefined,
     category: raw.category,
+    categoryPath: raw.categoryPath?.length
+      ? raw.categoryPath
+      : [raw.category, raw.roomType],
     price: raw.price,
     wasPrice: raw.wasPrice,
     discountPercent: discount > 0 ? discount : undefined,

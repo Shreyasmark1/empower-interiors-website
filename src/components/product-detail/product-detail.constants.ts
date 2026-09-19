@@ -58,6 +58,26 @@ export const TRUST_POINTS = [
   "1 Year Warranty",
 ] as const
 
+export const VIEW_MODES = ["gallery", "360", "3d"] as const
+export type ViewMode = (typeof VIEW_MODES)[number]
+
+export const VIEW_MODE_LABELS: Record<ViewMode, string> = {
+  gallery: "Gallery",
+  360: "360°",
+  "3d": "3D",
+}
+
+export const DEFAULT_TAXES_TEXT = "Inclusive of all taxes"
+
+export const PAYMENT_OPTIONS = [
+  "UPI",
+  "Net Banking",
+  "Credit Card",
+  "Debit Card",
+  "EMI",
+  "Pay on delivery",
+] as const
+
 export const CONTACT = {
   phoneDisplay: "(080) 7123 4567",
   telHref: "tel:+918071234567",

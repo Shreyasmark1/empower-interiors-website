@@ -1,5 +1,4 @@
 import { z } from "zod"
-import type { LucideIcon } from "lucide-react"
 
 export const GalleryImageSchema = z.object({
   id: z.string().min(1),
@@ -40,9 +39,20 @@ export const ProductFeatureItemBaseSchema = z.object({
 
 export type ProductFeatureItemBase = z.infer<typeof ProductFeatureItemBaseSchema>
 
-export type ProductFeatureItem = ProductFeatureItemBase & {
-  icon: LucideIcon
-}
+export type ProductFeatureItem = ProductFeatureItemBase
+
+export const ProductVariantSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  swatch: z.string().min(1),
+  images: z.array(z.string().min(1)).default([]),
+  price: z.number().positive().optional(),
+})
+
+export type ProductVariant = z.infer<typeof ProductVariantSchema>
+
+export const ProductBadgeSchema = z.enum(["new", "bestseller"])
+export type ProductBadge = z.infer<typeof ProductBadgeSchema>
 
 export const ProductDetailDisplayBaseSchema = z.object({
   slug: z.string().min(1),
@@ -62,6 +72,14 @@ export const ProductDetailDisplayBaseSchema = z.object({
   shippingInfo: z.string().min(1),
   warrantyLabel: z.string().optional(),
   gallery: z.array(GalleryImageSchema).min(1),
+  variants: z.array(ProductVariantSchema).default([]),
+  badges: z.array(ProductBadgeSchema).default([]),
+  categoryPath: z.array(z.string().min(1)).optional(),
+  taxesText: z.string().optional(),
+  has360: z.boolean().default(false),
+  has3d: z.boolean().default(false),
+  frames: z.array(z.string().min(1)).default([]),
+  modelUrl: z.string().optional(),
   specifications: SpecificationsSchema,
   dimensions: DimensionsSchema.optional(),
   materials: z.array(z.string().min(1)),
@@ -84,6 +102,7 @@ export const RelatedProductRawSchema = z.object({
   brand: z.string().optional(),
   category: z.string().min(1),
   roomType: z.string().min(1),
+  categoryPath: z.array(z.string().min(1)).optional(),
   price: z.number().positive(),
   wasPrice: z.number().positive().optional(),
   priceDisplay: z.string().min(1),
@@ -111,6 +130,14 @@ export const ProductDetailRawSchema = z.object({
   imageSide: z.string().min(1).optional(),
   imageDetail: z.string().min(1).optional(),
   imageLifestyle: z.string().min(1).optional(),
+  variants: z.array(ProductVariantSchema).default([]),
+  badges: z.array(ProductBadgeSchema).default([]),
+  categoryPath: z.array(z.string().min(1)).optional(),
+  taxesText: z.string().optional(),
+  has360: z.boolean().default(false),
+  has3d: z.boolean().default(false),
+  frames: z.array(z.string().min(1)).default([]),
+  modelUrl: z.string().optional(),
   specifications: z.record(z.string(), z.string()),
   dimensions: DimensionsSchema.optional(),
   materials: z.string().min(1),

@@ -8,8 +8,8 @@ const meta = {
   component: RelatedProducts,
   tags: ["autodocs"],
   args: {
+    product: SOFA,
     related: SOFA_RELATED,
-    roomType: SOFA.roomType,
   },
 } satisfies Meta<typeof RelatedProducts>
 

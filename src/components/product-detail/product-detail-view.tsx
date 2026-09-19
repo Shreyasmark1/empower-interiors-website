@@ -1,18 +1,20 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 import { motion } from "motion/react"
 import { ArrowLeft, ChevronRight } from "lucide-react"
 
+import { BenefitsStrip } from "@/components/benefits-strip"
+import { PaymentOptions } from "@/components/payment-options"
+import { SuggestProduct } from "@/components/suggest-product"
+import type { GalleryImage, ProductDetailInfo } from "@/lib/schemas"
 import { cn } from "@/lib/utils"
-import type { ProductDetailInfo } from "@/lib/schemas"
 import { NAVBAR_HEIGHT, pageMotion } from "./product-detail.constants"
 import { ProductGallery } from "./product-gallery"
 import { ProductInfo } from "./product-info"
 import { ProductTabs } from "./product-tabs"
-import { ProductFeatures } from "./product-features"
 import { RelatedProducts, type RelatedProduct } from "./related-products"
-import { MobileActionBar } from "./mobile-action-bar"
 
 type ProductDetailViewProps = {
   product: ProductDetailInfo
@@ -20,8 +22,27 @@ type ProductDetailViewProps = {
   className?: string
 }
 
+function variantImages(product: ProductDetailInfo, variantId?: string): GalleryImage[] {
+  const variant = product.variants.find((item) => item.id === variantId)
+  if (!variant || variant.images.length === 0) return product.gallery
+
+  return variant.images.map((src, i) => {
+    const base = product.gallery[i % product.gallery.length]
+    return {
+      id: `${variant.id}-${i}`,
+      gradient: base?.gradient ?? "linear-gradient(135deg, oklch(0.7 0.18 310) 0%, oklch(0.46 0.14 330) 100%)",
+      imageSrc: src,
+      label: base?.label ?? "View",
+    }
+  })
+}
+
 function ProductDetailView({ product, related, className }: ProductDetailViewProps) {
   const roomHref = `/products?room=${encodeURIComponent(product.roomType)}`
+  const [activeVariantId, setActiveVariantId] = React.useState<string | undefined>(
+    product.variants[0]?.id
+  )
+  const images = variantImages(product, activeVariantId)
 
   return (
     <motion.div
@@ -48,28 +69,37 @@ function ProductDetailView({ product, related, className }: ProductDetailViewPro
         </div>
       </div>
 
-      {/* Hero grid */}
+      {/* Hero grid — gallery pinned, info rail scrolls */}
       <div className="mx-auto w-[94%] max-w-[1280px] md:w-[90%]">
-        <div className="grid grid-cols-1 gap-10 pt-8 pb-16 lg:grid-cols-[58fr_42fr] lg:gap-16 lg:pt-12 lg:pb-20">
-          <ProductGallery images={product.gallery} productName={product.name} />
+        <div className="grid grid-cols-1 gap-10 pt-8 pb-16 lg:grid-cols-[55fr_45fr] lg:items-start lg:gap-16 lg:pt-12 lg:pb-20">
           <div className="lg:sticky lg:top-[calc(var(--navbar-height-compact)+1.5rem)] lg:self-start">
-            <ProductInfo product={product} />
+            <ProductGallery
+              images={images}
+              productName={product.name}
+              has360={product.has360}
+              has3d={product.has3d}
+              frames={product.frames}
+              modelUrl={product.modelUrl}
+            />
+          </div>
+
+          <div className="flex flex-col gap-8 px-6 lg:px-10">
+            <ProductInfo
+              product={product}
+              activeVariantId={activeVariantId}
+              onVariantChange={setActiveVariantId}
+            />
+            <PaymentOptions />
+            <BenefitsStrip />
+            <ProductTabs product={product} />
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="mx-auto w-[94%] max-w-[1280px] pb-16 md:w-[90%] lg:pb-24">
-        <ProductTabs product={product} />
-      </div>
-
-      {/* Features */}
-      <ProductFeatures features={product.features} />
-
       {/* Related */}
-      <RelatedProducts related={related} roomType={product.roomType} />
+      <RelatedProducts product={product} related={related} />
 
-      <MobileActionBar product={product} />
+      <SuggestProduct />
     </motion.div>
   )
 }

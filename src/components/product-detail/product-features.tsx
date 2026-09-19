@@ -4,6 +4,7 @@ import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 import type { ProductFeatureItem } from "@/lib/schemas"
+import { FEATURE_ICONS } from "./product-detail.constants"
 
 type ProductFeaturesProps = {
   features: ProductFeatureItem[]
@@ -32,7 +33,7 @@ function ProductFeatures({ features, className }: ProductFeaturesProps) {
         </motion.div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-x-20 lg:gap-y-14">
           {features.map((feature, i) => {
-            const Icon = feature.icon
+            const Icon = FEATURE_ICONS[feature.iconKey]
             return (
               <motion.div
                 key={feature.title}

@@ -1,0 +1,1 @@
+export { SuggestProduct } from "./suggest-product"
