@@ -42,7 +42,7 @@ function ProductInfo({ product, className }: ProductInfoProps) {
         {product.brand && (
           <p className="text-sm text-muted-foreground">By {product.brand}</p>
         )}
-        <p className="mt-2 max-w-lg leading-relaxed text-muted-foreground">
+        <p className="mt-2 max-w-[32rem] leading-relaxed text-muted-foreground">
           {product.shortDescription}
         </p>
       </div>

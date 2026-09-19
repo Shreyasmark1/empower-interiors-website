@@ -125,7 +125,7 @@ function MegaMenuDesktop({ className }: { className?: string }) {
     <div
       ref={rootRef}
       className={cn(
-        "relative hidden w-full border-b border-border bg-background md:block",
+        "relative hidden w-full border-b border-border bg-megamenu-bg md:block",
         className,
       )}
       onMouseLeave={handlePanelLeave}
@@ -155,7 +155,7 @@ function MegaMenuDesktop({ className }: { className?: string }) {
               >
                 {cat.name}
                 {activeId === cat.id && isOpen ? (
-                  <span className="absolute inset-x-4 -bottom-[1px] h-0.5 bg-brand" />
+                  <span className="absolute inset-x-4 -bottom-px h-0.5 bg-brand" />
                 ) : null}
               </Link>
             </div>
@@ -176,11 +176,13 @@ function MegaMenuDesktop({ className }: { className?: string }) {
 
           {/* Panel constrained to the site container width */}
           <Container className="relative h-full">
-            <div className="box-border grid h-full w-full max-w-full grid-cols-9 grid-rows-1 gap-8 overflow-y-auto bg-background shadow-2xl">
+            <div className="box-border grid h-full w-full max-w-full grid-cols-9 grid-rows-1 gap-8 overflow-y-auto bg-megamenu-bg shadow-2xl">
               {/* Link columns — 9/7/5 columns; fixed 5 tracks per row, excess wraps */}
-              <div className={`${listColClass} grid grid-rows-1 grid-cols-5 gap-5`}>
+              <div
+                className={`${listColClass} grid grid-rows-1 grid-cols-5 gap-5`}
+              >
                 {activeCategory.groups.map((group) => (
-                  <div key={group.id} className="min-w-0 p-5 odd:bg-muted">
+                  <div key={group.id} className="min-w-0 p-2 odd:bg-odd-bg">
                     <Link
                       href={
                         group.href ??
@@ -192,16 +194,16 @@ function MegaMenuDesktop({ className }: { className?: string }) {
                         setActiveId(null);
                       }}
                     >
-                      <h3 className="text-sm font-bold text-foreground transition-colors hover:text-brand">
+                      <h3 className="text-sm text-brand transition-colors hover:text-brand">
                         {group.title}
                       </h3>
                     </Link>
-                    <ul className="flex flex-col gap-2">
+                    <ul className="flex flex-col gap-1">
                       {group.items.map((item) => (
                         <li key={item.id}>
                           <Link
                             href={item.href}
-                            className="flex w-full items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-brand"
+                            className="flex w-full items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-brand"
                             onClick={() => {
                               setIsOpen(false);
                               setActiveId(null);

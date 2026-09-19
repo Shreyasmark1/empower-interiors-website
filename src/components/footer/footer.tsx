@@ -160,7 +160,7 @@ export default function Footer({ className }: FooterProps) {
               <h2 className="text-xl font-bold tracking-tight text-foreground">
                 {BRAND_NAME}
               </h2>
-              <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+              <p className="max-w-[20rem] text-sm leading-relaxed text-muted-foreground">
                 {BRAND_TAGLINE}
               </p>
               <div className="flex items-center gap-3">

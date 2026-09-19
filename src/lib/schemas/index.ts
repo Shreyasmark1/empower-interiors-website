@@ -5,3 +5,4 @@ export * from "./review";
 export * from "./navigation";
 export * from "./hero";
 export * from "./catalog";
+export * from "./filter";

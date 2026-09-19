@@ -36,7 +36,7 @@ function PrimaryHeroBanner({ banner }: PrimaryHeroBannerProps) {
           {banner.title}
         </h2>
         {banner.subtitle ? (
-          <p className="mb-4 max-w-sm text-sm text-white/90">
+          <p className="mb-4 max-w-[24rem] text-sm text-white/90">
             {banner.subtitle}
           </p>
         ) : null}

@@ -58,12 +58,12 @@ function HeroBanner({
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col justify-center px-4 py-6 sm:px-6 lg:px-8">
-          <div className="max-w-md lg:max-w-xl">
+          <div className="max-w-[28rem] lg:max-w-[36rem]">
             <h2 className="mb-2 text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl">
               {headline}
             </h2>
             {subtext ? (
-              <p className="mb-5 max-w-sm text-sm text-white/90 sm:mb-7 sm:text-base">
+              <p className="mb-5 max-w-[24rem] text-sm text-white/90 sm:mb-7 sm:text-base">
                 {subtext}
               </p>
             ) : null}

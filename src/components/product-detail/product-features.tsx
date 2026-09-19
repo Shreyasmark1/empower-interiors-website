@@ -44,7 +44,7 @@ function ProductFeatures({ features, className }: ProductFeaturesProps) {
               >
                 <Icon className="size-6 text-brand-magenta" strokeWidth={1.3} />
                 <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
-                <p className="max-w-md leading-relaxed text-muted-foreground">
+                <p className="max-w-[28rem] leading-relaxed text-muted-foreground">
                   {feature.description}
                 </p>
               </motion.div>

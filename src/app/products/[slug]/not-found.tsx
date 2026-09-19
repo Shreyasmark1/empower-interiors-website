@@ -7,7 +7,7 @@ export default function ProductDetailNotFound() {
         Empower Interiors
       </p>
       <h1 className="text-3xl font-semibold text-foreground">Product not found</h1>
-      <p className="max-w-md leading-relaxed text-muted-foreground">
+      <p className="max-w-[28rem] leading-relaxed text-muted-foreground">
         The piece you are looking for may have been discontinued or the link is
         no longer active.
       </p>

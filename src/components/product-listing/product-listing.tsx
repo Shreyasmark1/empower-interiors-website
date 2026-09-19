@@ -12,6 +12,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { ProductCard } from "@/components/product-card";
 
 import { ListingHeader } from "@/components/listing-header";
+import { ProductFilterContainer } from "@/components/product-filter-container";
 import { ResultCount } from "./result-count";
 
 const PAGE_SIZE = 20;
@@ -92,17 +93,18 @@ function ProductListingView({ listing, className }: ProductListingViewProps) {
           description={listing.description}
         />
       </Container>
+  <ProductFilterContainer />
 
-      <Container className="pt-4 pb-6">
-        {/* Subcategories contained in the current node */}
-        {listing.subcategories.length > 0 ? (
+      {listing.subcategories.length > 0 ? (
+        <Container className="pt-4 pb-6">
+          {/* Subcategories contained in the current node */}
           <div className="flex flex-wrap gap-2.5">
             {listing.subcategories.map((sub) => (
               <SubcategoryChip key={sub.href} item={sub} />
             ))}
           </div>
-        ) : null}
-      </Container>
+        </Container>
+      ) : null}
 
       {/* Products — full-width canvas band */}
       <div className="bg-muted">

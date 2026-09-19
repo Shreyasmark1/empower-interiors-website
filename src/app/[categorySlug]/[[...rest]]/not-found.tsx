@@ -9,7 +9,7 @@ export default function CategoryListingNotFound() {
       <h1 className="text-3xl font-semibold text-foreground">
         Category not found
       </h1>
-      <p className="max-w-md leading-relaxed text-muted-foreground">
+      <p className="max-w-[28rem] leading-relaxed text-muted-foreground">
         The collection you are looking for may have been moved or the link is no
         longer active.
       </p>

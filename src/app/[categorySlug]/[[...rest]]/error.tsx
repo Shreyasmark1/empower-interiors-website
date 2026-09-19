@@ -23,7 +23,7 @@ export default function CategoryListingError({ error, reset }: ErrorProps) {
       <h1 className="text-3xl font-semibold text-foreground">
         Something went wrong
       </h1>
-      <p className="max-w-md leading-relaxed text-muted-foreground">
+      <p className="max-w-[28rem] leading-relaxed text-muted-foreground">
         We hit a snag while loading this collection. Your wishlist and basket are
         safe.
       </p>
