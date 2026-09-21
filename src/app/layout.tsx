@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto, Roboto_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
-import { Header } from "@/components/header";
-import { PromoBanner } from "@/components/promo-banner";
-import { Footer } from "@/components/footer";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -29,10 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${roboto.variable} ${robotoMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <PromoBanner className="hidden md:flex" />
-        <Header />
         {children}
-        <Footer />
         <Toaster />
       </body>
     </html>
