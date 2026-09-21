@@ -37,3 +37,10 @@ Consumers import via the folder barrel: `@/components/ui/button`, `@/components/
 - Services own the transport (fetch/axios), validate inputs and outputs with zod (`.parse`), and return typed promises. Backend not decided yet → services are backed by an in-memory mock store; swapping to real API later only touches the service, never the UI.
 - Types come exclusively from zod, in one place: `src/lib/schemas/` (`index.ts` re-exports). Component/service code uses `z.infer<>` types — no hand-authored interfaces for domain objects.
 - Derivation rule: `XBaseSchema` = creation payload (no `id`); `XSchema = XBaseSchema.extend({ id })` = entity + update payload; export `CreateX`, `X`, `UpdateX` inferred types.
+
+### Backend API layer (routes under `src/app/api/`)
+- Request/response zod schemas for the HTTP API live in `src/lib/schemas/api/<group>.ts` (`auth.ts`, `category.ts`, `product.ts`, `variant.ts`, `promotion.ts`, `promotion-target.ts`, `product-category.ts`, `common.ts`). **No barrel/`index.ts` in `api/`** — routes import the individual files directly, e.g. `import { CategoryCreateSchema } from "@/lib/schemas/api/category"`.
+- Per entity: `XCreateSchema` (no `id`) and `XUpdateSchema` (`id` required, every field optional, **no defaults** so partial updates never touch omitted columns).
+- POST routes follow the upsert rule: if the request body contains `id` → update, otherwise create.
+- Route handlers stay thin. Each exported `GET`/`POST` calls `handleErrors(() => _getX(request))` / `handleErrors(() => _postX(request))`; the logic lives in `_getX` / `_postX` / `_getXById` functions that throw `ApiError(status, message)` (funneled by `handleErrors`). Mutating `_postX` handlers call `requireAuth(request)` (defense-in-depth behind `src/proxy.ts`, which already enforces a valid JWT on every non-GET `/api/*` request except `/api/auth/*`).
+- Shared helpers live in `src/lib/api/` (`http.ts`: `ok`/`err`/`ApiError`/`handleErrors`; `request.ts`: `readJsonBody`/`pickDefined`/`isUniqueViolation`). Per-entity upsert queries live in the route file, not a shared crud helper.
