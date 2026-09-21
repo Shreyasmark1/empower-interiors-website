@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
 import { db } from "@/db";
-import { promotions } from "@/db/schema";
+import { promotionTargets, promotions } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
 import {
   entityIdSchema,
@@ -24,8 +24,8 @@ async function _getPromotionById(params: Promise<{ id: string }>) {
   }
 
   const row = await db.query.promotions.findFirst({
-    where: eq(promotions.id, id.data),
-    with: { targets: true },
+    where: and(eq(promotions.id, id.data), eq(promotions.isDeleted, false)),
+    with: { targets: { where: eq(promotionTargets.isDeleted, false) } },
   });
   if (!row) {
     throw new ApiError(404, "Promotion not found");

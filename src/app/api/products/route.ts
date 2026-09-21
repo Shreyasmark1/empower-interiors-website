@@ -34,11 +34,12 @@ async function _getProducts(request: NextRequest) {
   if (!parsed.success) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
-  const { limit, offset } = parsed.data;
+  const { limit, offset, includeDeleted } = parsed.data;
 
   const items = await db
     .select()
     .from(products)
+    .where(includeDeleted ? undefined : eq(products.isDeleted, false))
     .orderBy(asc(products.id))
     .limit(limit)
     .offset(offset);

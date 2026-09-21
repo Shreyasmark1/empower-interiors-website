@@ -29,6 +29,7 @@ export const PromotionUpdateSchema = z.object({
   endsAt: z.coerce.date().nullable().optional(),
   isActive: z.boolean().optional(),
   sortOrder: z.coerce.number().int().optional(),
+  isDeleted: z.boolean().optional(),
 });
 
 export type UpdatePromotion = z.infer<typeof PromotionUpdateSchema>;

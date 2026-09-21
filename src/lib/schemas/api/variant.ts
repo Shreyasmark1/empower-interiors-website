@@ -19,6 +19,7 @@ export const VariantUpdateSchema = z.object({
   price: z.number().positive().optional(),
   sortOrder: z.coerce.number().int().optional(),
   isActive: z.boolean().optional(),
+  isDeleted: z.boolean().optional(),
 });
 
 export type UpdateVariant = z.infer<typeof VariantUpdateSchema>;

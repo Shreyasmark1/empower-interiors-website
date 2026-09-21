@@ -31,6 +31,7 @@ export const categories = pgTable(
     image: text("image"),
     sortOrder: integer("sort_order").notNull().default(0),
     isActive: boolean("is_active").notNull().default(true),
+    isDeleted: boolean("is_deleted").notNull().default(false),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "date",
@@ -64,6 +65,7 @@ export const products = pgTable(
       .notNull()
       .default({}),
     isActive: boolean("is_active").notNull().default(true),
+    isDeleted: boolean("is_deleted").notNull().default(false),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "date",
@@ -110,6 +112,7 @@ export const variants = pgTable(
     price: numeric("price", { precision: 12, scale: 2, mode: "number" }).notNull(),
     sortOrder: integer("sort_order").notNull().default(0),
     isActive: boolean("is_active").notNull().default(true),
+    isDeleted: boolean("is_deleted").notNull().default(false),
     createdAt: timestamp("created_at", {
       withTimezone: true,
       mode: "date",
@@ -140,6 +143,7 @@ export const promotions = pgTable(
     startsAt: timestamp("starts_at", { withTimezone: true, mode: "date" }),
     endsAt: timestamp("ends_at", { withTimezone: true, mode: "date" }),
     isActive: boolean("is_active").notNull().default(true),
+    isDeleted: boolean("is_deleted").notNull().default(false),
     sortOrder: integer("sort_order").notNull().default(0),
     createdAt: timestamp("created_at", {
       withTimezone: true,
@@ -179,6 +183,7 @@ export const promotionTargets = pgTable(
     }),
     placement: varchar("placement", { length: 50 }).notNull(),
     sortOrder: integer("sort_order").notNull().default(0),
+    isDeleted: boolean("is_deleted").notNull().default(false),
   },
   (table) => [
     index("idx_promotion_targets_promotion_id").on(table.promotionId),

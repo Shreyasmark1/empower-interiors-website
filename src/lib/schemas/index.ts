@@ -6,3 +6,4 @@ export * from "./navigation";
 export * from "./hero";
 export * from "./catalog";
 export * from "./filter";
+export * from "./category";

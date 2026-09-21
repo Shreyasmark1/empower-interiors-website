@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
 import { db } from "@/db";
@@ -26,7 +26,7 @@ async function _getVariantById(params: Promise<{ id: string }>) {
   const [row] = await db
     .select()
     .from(variants)
-    .where(eq(variants.id, id.data))
+    .where(and(eq(variants.id, id.data), eq(variants.isDeleted, false)))
     .limit(1);
   if (!row) {
     throw new ApiError(404, "Variant not found");

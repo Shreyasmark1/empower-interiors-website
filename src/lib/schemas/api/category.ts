@@ -21,6 +21,7 @@ export const CategoryUpdateSchema = z.object({
   image: z.string().nullable().optional(),
   sortOrder: z.coerce.number().int().optional(),
   isActive: z.boolean().optional(),
+  isDeleted: z.boolean().optional(),
 });
 
 export type UpdateCategory = z.infer<typeof CategoryUpdateSchema>;

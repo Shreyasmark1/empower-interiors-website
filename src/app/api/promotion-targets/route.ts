@@ -34,7 +34,7 @@ async function _getPromotionTargets(request: NextRequest) {
   if (!listQuery.success) {
     throw new ApiError(400, firstIssueMessage(listQuery.error));
   }
-  const { limit, offset } = listQuery.data;
+  const { limit, offset, includeDeleted } = listQuery.data;
 
   const conditions = [];
   for (const key of ["promotionId", "categoryId", "productId"] as const) {
@@ -44,6 +44,9 @@ async function _getPromotionTargets(request: NextRequest) {
       throw new ApiError(400, firstIssueMessage(parsed.error));
     }
     conditions.push(eq(promotionTargets[key], parsed.data));
+  }
+  if (!includeDeleted) {
+    conditions.push(eq(promotionTargets.isDeleted, false));
   }
 
   const items = await db

@@ -33,11 +33,12 @@ async function _getPromotions(request: NextRequest) {
   if (!parsed.success) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
-  const { limit, offset } = parsed.data;
+  const { limit, offset, includeDeleted } = parsed.data;
 
   const items = await db
     .select()
     .from(promotions)
+    .where(includeDeleted ? undefined : eq(promotions.isDeleted, false))
     .orderBy(asc(promotions.sortOrder), asc(promotions.id))
     .limit(limit)
     .offset(offset);

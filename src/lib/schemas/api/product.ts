@@ -21,6 +21,7 @@ export const ProductUpdateSchema = z.object({
   minPrice: z.number().positive().nullable().optional(),
   specifications: z.record(z.string(), z.unknown()).optional(),
   isActive: z.boolean().optional(),
+  isDeleted: z.boolean().optional(),
 });
 
 export type UpdateProduct = z.infer<typeof ProductUpdateSchema>;

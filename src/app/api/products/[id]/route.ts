@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
 import { db } from "@/db";
-import { products } from "@/db/schema";
+import { products, variants } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
 import {
   entityIdSchema,
@@ -24,9 +24,9 @@ async function _getProductById(params: Promise<{ id: string }>) {
   }
 
   const row = await db.query.products.findFirst({
-    where: eq(products.id, id.data),
+    where: and(eq(products.id, id.data), eq(products.isDeleted, false)),
     with: {
-      variants: true,
+      variants: { where: eq(variants.isDeleted, false) },
       categoryLinks: { with: { category: true } },
     },
   });

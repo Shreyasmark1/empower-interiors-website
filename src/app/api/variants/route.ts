@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
 import { db } from "@/db";
@@ -33,7 +33,7 @@ async function _getVariants(request: NextRequest) {
   if (!parsed.success) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
-  const { limit, offset } = parsed.data;
+  const { limit, offset, includeDeleted } = parsed.data;
 
   let productId: number | null = null;
   if (query.productId !== undefined) {
@@ -44,12 +44,18 @@ async function _getVariants(request: NextRequest) {
     productId = parsed.data;
   }
 
+  const conditions = [];
+  if (productId !== null) {
+    conditions.push(eq(variants.productId, productId));
+  }
+  if (!includeDeleted) {
+    conditions.push(eq(variants.isDeleted, false));
+  }
+
   const items = await db
     .select()
     .from(variants)
-    .where(
-      productId !== null ? eq(variants.productId, productId) : undefined,
-    )
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
     .orderBy(asc(variants.sortOrder), asc(variants.id))
     .limit(limit)
     .offset(offset);

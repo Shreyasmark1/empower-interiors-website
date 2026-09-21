@@ -41,6 +41,7 @@ export const PromotionTargetUpdateSchema = z.object({
   productId: z.coerce.number().int().positive().nullable().optional(),
   placement: z.enum(PLACEMENTS).optional(),
   sortOrder: z.coerce.number().int().optional(),
+  isDeleted: z.boolean().optional(),
 });
 
 export type UpdatePromotionTarget = z.infer<

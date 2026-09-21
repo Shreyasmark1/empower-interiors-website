@@ -11,6 +11,10 @@ export type GetByIdParams = z.infer<typeof getByIdSchema>;
 export const listQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
   offset: z.coerce.number().int().min(0).default(0),
+  includeDeleted: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
 });
 
 export type ListQuery = z.infer<typeof listQuerySchema>;

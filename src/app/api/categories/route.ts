@@ -34,11 +34,12 @@ async function _getCategories(request: NextRequest) {
   if (!parsed.success) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
-  const { limit, offset } = parsed.data;
+  const { limit, offset, includeDeleted } = parsed.data;
 
   const items = await db
     .select()
     .from(categories)
+    .where(includeDeleted ? undefined : eq(categories.isDeleted, false))
     .orderBy(asc(categories.sortOrder), asc(categories.id))
     .limit(limit)
     .offset(offset);
