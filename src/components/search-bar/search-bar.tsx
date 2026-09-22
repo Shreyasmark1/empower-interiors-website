@@ -49,6 +49,8 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
   );
 }
 
+const VISIBLE_SUGGESTION_LIMIT = 8;
+
 export function SearchWithDropdown({
   className,
   placeholder = "Search products, categories, and more",
@@ -72,6 +74,11 @@ export function SearchWithDropdown({
     }
     return suggestions.filter((item) => item.toLowerCase().includes(trimmed));
   }, [query, suggestions]);
+
+  const visibleSuggestions = filteredSuggestions.slice(
+    0,
+    VISIBLE_SUGGESTION_LIMIT,
+  );
 
   useEffect(() => {
     function handleMouseDown(event: MouseEvent) {
@@ -100,11 +107,7 @@ export function SearchWithDropdown({
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
       event.preventDefault();
-      if (filteredSuggestions.length > 0) {
-        chooseValue(filteredSuggestions[0]);
-      } else {
-        submit();
-      }
+      submit();
     } else if (event.key === "Escape") {
       setIsOpen(false);
     }
@@ -176,9 +179,9 @@ export function SearchWithDropdown({
             </>
           ) : (
             <>
-              {filteredSuggestions.length > 0 && (
+              {visibleSuggestions.length > 0 && (
                 <ul>
-                  {filteredSuggestions.map((item) => (
+                  {visibleSuggestions.map((item) => (
                     <li key={item}>
                       <button
                         type="button"

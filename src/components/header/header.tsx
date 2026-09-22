@@ -16,6 +16,7 @@ import {
   WishlistIcon,
 } from "@/lib/icons";
 import { cartService } from "@/lib/services/cart.service";
+import { searchService } from "@/lib/services/search.service";
 import { cn } from "@/lib/utils";
 
 type HeaderProps = {
@@ -25,6 +26,12 @@ type HeaderProps = {
   onWishlist?: () => void;
   onCart?: () => void;
 };
+
+const SEARCH_SUGGESTIONS = searchService.getSuggestionProducts();
+const SEARCH_SUGGESTION_NAMES = SEARCH_SUGGESTIONS.map((item) => item.label);
+const SEARCH_SLUG_BY_LABEL = new Map(
+  SEARCH_SUGGESTIONS.map((item) => [item.label, item.slug]),
+);
 
 function MobileIconButton({
   label,
@@ -70,6 +77,21 @@ function Header({
 
   const handleWishlist = onWishlist ?? (() => router.push("/wishlist"));
   const handleCart = onCart ?? (() => router.push("/cart"));
+
+  const handleSearch = (value: string) => {
+    const query = value.trim();
+    if (!query) return;
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
+
+  const handleSuggestionSelect = (value: string) => {
+    const slug = SEARCH_SLUG_BY_LABEL.get(value);
+    if (slug) {
+      router.push(`/products/${slug}`);
+    } else {
+      handleSearch(value);
+    }
+  };
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -120,7 +142,12 @@ function Header({
         </div>
 
         <div className="px-4 pt-1 pb-3">
-          <SearchBar className="w-full" />
+          <SearchBar
+            className="w-full"
+            suggestions={SEARCH_SUGGESTION_NAMES}
+            onSearch={handleSearch}
+            onSelect={handleSuggestionSelect}
+          />
         </div>
 
         <MobileCategoryNav />
@@ -144,7 +171,11 @@ function Header({
          
 
           <div className="min-w-0 px-4">
-            <SearchBar />
+            <SearchBar
+              suggestions={SEARCH_SUGGESTION_NAMES}
+              onSearch={handleSearch}
+              onSelect={handleSuggestionSelect}
+            />
           </div>
 
            <Logo className="shrink-0 text-2xl" />

@@ -88,3 +88,21 @@ export const Empty: Story = {
     },
   },
 }
+
+export const SearchEmptyResults: Story = {
+  args: {
+    listing: {
+      breadcrumb: [
+        { label: "Home", href: "/" },
+        { label: "Search", href: "/search" },
+      ],
+      title: 'Results for "xyz"',
+      description: '0 results matching "xyz"',
+      subcategories: [],
+      products: [],
+    },
+    emptyTitle: 'No results found for "xyz"',
+    emptyDescription:
+      'We couldn\'t find any matches for "xyz". Try a different keyword.',
+  },
+}

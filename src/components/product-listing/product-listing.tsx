@@ -20,6 +20,8 @@ const PAGE_SIZE = 20;
 type ProductListingViewProps = {
   listing: ProductListing;
   className?: string;
+  emptyTitle?: string;
+  emptyDescription?: string;
 };
 
 function SubcategoryChip({ item }: { item: ListingLink }) {
@@ -46,7 +48,12 @@ function SubcategoryChip({ item }: { item: ListingLink }) {
   );
 }
 
-function ProductListingView({ listing, className }: ProductListingViewProps) {
+function ProductListingView({
+  listing,
+  className,
+  emptyTitle,
+  emptyDescription,
+}: ProductListingViewProps) {
   const [page, setPage] = useState(1);
   const [wishlisted, setWishlisted] = useState<Set<string>>(new Set());
 
@@ -156,11 +163,11 @@ function ProductListingView({ listing, className }: ProductListingViewProps) {
           ) : (
             <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border py-16 text-center">
               <p className="text-base font-medium text-foreground">
-                No products yet in {listing.title}
+                {emptyTitle ?? `No products yet in ${listing.title}`}
               </p>
               <p className="text-sm text-muted-foreground">
-                We are adding new pieces here soon. Explore other collections
-                meanwhile.
+                {emptyDescription ??
+                  "We are adding new pieces here soon. Explore other collections meanwhile."}
               </p>
             </div>
           )}

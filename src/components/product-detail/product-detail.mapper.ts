@@ -9,7 +9,83 @@ import type {
   ProductDetailInfo,
   ProductDetailRaw,
   RelatedProductRaw,
+  CatalogProduct,
 } from "@/lib/schemas"
+
+const ROOM_BY_PATH_SEGMENT: Record<string, string> = {
+  seating: "Living Room",
+  dining: "Dining Room",
+  lighting: "Living Room",
+  storage: "Bedroom",
+  decor: "Home Decor",
+  bedding: "Bedroom",
+}
+
+function titleCase(value: string): string {
+  return value
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ")
+}
+
+export function fromCatalogProduct(product: CatalogProduct): ProductDetailRaw {
+  const segments = product.path.split("/").filter(Boolean)
+  const category = segments[0] ? titleCase(segments[0]) : "Collection"
+  const roomType = ROOM_BY_PATH_SEGMENT[segments[0]] ?? category
+  const categoryPath = segments.map(titleCase)
+  const priceDisplay = `₹${product.price.toLocaleString("en-IN")}`
+  const emiText = product.emiStarting
+    ? `EMI starting from ${product.emiStarting}`
+    : `EMI starting from ₹${Math.round(product.price / 24).toLocaleString("en-IN")}/month`
+
+  return {
+    slug: product.slug,
+    name: product.name,
+    shortDescription: `${product.name} — a ${category.toLowerCase()} classic from Empower Interiors, priced for everyday living.`,
+    description: `${product.name} brings effortless style to your ${roomType.toLowerCase()}.\n\nCrafted with a durable, easy-to-maintain finish, it pairs clean lines with everyday comfort. Order online and we will deliver it fully assembled, ready to place.`,
+    brand: product.brand,
+    category,
+    roomType,
+    price: product.price,
+    wasPrice: product.wasPrice,
+    priceDisplay,
+    emiText,
+    availability: "inStock",
+    shippingInfo: "Ships in 4-6 days",
+    warrantyLabel: product.warrantyLabel,
+    imageMain: product.image,
+    imageSide: product.image,
+    imageDetail: product.image,
+    imageLifestyle: product.image,
+    variants: (product.colors ?? []).map((variant, index) => ({
+      id: `${product.slug}-${index}`,
+      name: variant.color,
+      swatch: variant.swatch,
+      images: [],
+    })),
+    badges: [],
+    categoryPath,
+    taxesText: "Inclusive of all taxes",
+    has360: false,
+    has3d: false,
+    frames: [],
+    modelUrl: undefined,
+    specifications: {
+      Brand: product.brand ?? "Empower Studio",
+      Warranty: product.warrantyLabel ?? "12-Month Warranty Available",
+      Assembly: "Free doorstep installation",
+      Delivery: "Ships fully assembled",
+    },
+    materials: `${category} piece in a hard-wearing, easy-to-clean finish\nStable, kiln-dried frame built for daily use`,
+    careInstructions:
+      "Wipe with a clean, dry cloth\nBlot spills immediately with a soft cloth\nAvoid direct sunlight to prevent fading",
+    deliveryInfo:
+      "Free delivery across Mangalore, Bangalore and all metro cities\nShips fully assembled in custom packaging",
+    installationInfo:
+      "Two-person installation team arrives within your chosen window\nPackaging removed and recycled on site",
+    relatedProducts: [],
+  }
+}
 
 function splitBullets(value: string): string[] {
   return value

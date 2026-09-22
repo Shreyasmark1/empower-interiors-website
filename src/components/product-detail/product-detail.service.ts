@@ -1,9 +1,11 @@
 import { mockProductDetailPages } from "./product-detail.mock"
 import {
+  fromCatalogProduct,
   toProductDetail,
   toRelatedProductCard,
 } from "./product-detail.mapper"
 import { ProductDetailRawSchema } from "@/lib/schemas"
+import { mockCatalog } from "@/components/product-listing"
 
 export type ProductDetailPage = {
   product: ReturnType<typeof toProductDetail>
@@ -30,12 +32,21 @@ function innermost(path: string[] | undefined, fallback: string[]): string {
 export const productDetailService = {
   async getBySlug(slug: string): Promise<ProductDetailPage | null> {
     const raw = mockProductDetailPages.find((page) => page.slug === slug)
-    if (!raw) return null
+    if (raw) {
+      const parsed = ProductDetailRawSchema.parse(raw)
+      return {
+        product: toProductDetail(parsed),
+        related: parsed.relatedProducts.map(toRelatedProductCard),
+      }
+    }
 
-    const parsed = ProductDetailRawSchema.parse(raw)
+    const catalogProduct = mockCatalog.find((product) => product.slug === slug)
+    if (!catalogProduct) return null
+
+    const parsed = ProductDetailRawSchema.parse(fromCatalogProduct(catalogProduct))
     return {
       product: toProductDetail(parsed),
-      related: parsed.relatedProducts.map(toRelatedProductCard),
+      related: [],
     }
   },
 
