@@ -104,3 +104,11 @@ export const pageMotion = {
 
 export const WHITE_BG = "oklch(1 0 0)"
 export const PAGE_GUTTER = "mx-auto w-[94%] max-w-[1280px] md:w-[90%]"
+
+export const CTA_PRIMARY =
+  "flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary px-8 text-white transition-all duration-200 hover:bg-brand-hover"
+
+export const CTA_OUTLINE =
+  "flex h-12 items-center justify-center rounded-lg border-[1.5px] border-primary bg-transparent px-8 text-primary transition-colors duration-200 hover:bg-[rgba(87,0,84,0.06)]"
+
+export const ICON_BUTTON = "grid size-10 shrink-0 place-items-center rounded-full"

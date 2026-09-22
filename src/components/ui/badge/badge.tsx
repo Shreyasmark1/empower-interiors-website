@@ -9,18 +9,18 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        category: "bg-[var(--category-tag-bg)] text-primary rounded-[6px] text-xs font-medium",
+        category: "bg-[var(--category-tag-bg)] text-primary rounded-lg text-xs font-medium",
         discount:
           "bg-brand-coral text-white rounded-full text-[11px] font-bold",
         inStock:
-          "bg-[var(--success-bg)] text-[var(--success-text)] rounded-[6px] text-[11px] font-semibold",
+          "bg-[var(--success-bg)] text-[var(--success-text)] rounded-lg text-[11px] font-semibold",
         soldOut:
-          "bg-[var(--soldout-bg)] text-brand-coral rounded-[6px] text-[11px] font-semibold",
+          "bg-[var(--soldout-bg)] text-brand-coral rounded-lg text-[11px] font-semibold",
         newArrival:
           "bg-gradient-brand text-white rounded-full text-[11px] font-semibold",
-        secondary: "bg-secondary text-secondary-foreground rounded-[6px]",
-        outline: "border border-border text-foreground rounded-[6px]",
-        default: "bg-primary text-primary-foreground rounded-[6px]",
+        secondary: "bg-secondary text-secondary-foreground rounded-lg",
+        outline: "border border-border text-foreground rounded-lg",
+        default: "bg-primary text-primary-foreground rounded-lg",
       },
     },
     defaultVariants: {

@@ -70,7 +70,7 @@ function DimensionGrid({
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {cells.map((cell) => (
-        <div key={cell.label} className="flex flex-col gap-1 rounded-md border border-border p-3">
+        <div key={cell.label} className="flex flex-col gap-1 rounded-lg border border-border p-3">
           <span className="text-[0.6875rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
             {cell.label}
           </span>

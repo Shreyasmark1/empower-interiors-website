@@ -9,6 +9,8 @@ import {
   buildConsultationHref,
   buildWhatsAppHref,
   CONTACT,
+  CTA_OUTLINE,
+  CTA_PRIMARY,
 } from "./product-detail.constants";
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -61,7 +63,7 @@ function ProductCTA({
         href={buildWhatsAppHref(name, roomType)}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#22c55e] text-white shadow-[0_10px_30px_rgba(34,197,94,0.32)] transition-all duration-200 hover:bg-[#16a34a] lg:w-auto lg:flex-1"
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#22c55e] text-white transition-all duration-200 hover:bg-[#16a34a] lg:w-auto lg:flex-1"
       >
         <WhatsAppIcon className="size-5" />
         Chat on WhatsApp
@@ -69,14 +71,14 @@ function ProductCTA({
       <div className="flex gap-2 lg:flex-1">
         <Link
           href={buildConsultationHref(slug, roomType)}
-          className="flex h-12 flex-1 items-center justify-center rounded-lg bg-primary text-white transition-all duration-200 hover:bg-brand-hover"
+          className={cn(CTA_PRIMARY, "flex-1")}
         >
           Get Free Consultation
         </Link>
         <a
           href={CONTACT.telHref}
           aria-label={`Call us at ${CONTACT.phoneDisplay}`}
-          className="grid h-12 min-w-12 items-center justify-center rounded-lg border-[1.5px] border-primary text-primary transition-colors duration-200 hover:bg-[rgba(87,0,84,0.06)]"
+          className={cn(CTA_OUTLINE, "min-w-12")}
         >
           <Phone className="size-5" strokeWidth={1.5} />
         </a>

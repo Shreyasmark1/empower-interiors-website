@@ -32,7 +32,7 @@ function AddToCart({ product, className }: AddToCartProps) {
   return (
     <div
       className={cn(
-        "flex h-12 w-full overflow-hidden rounded-lg bg-primary text-white shadow-[0_10px_30px_rgba(87,0,84,0.28)]",
+        "flex h-12 w-full overflow-hidden rounded-lg bg-primary text-white",
         className
       )}
     >

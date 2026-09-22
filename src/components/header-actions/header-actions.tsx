@@ -33,7 +33,7 @@ function IconButton({
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="relative inline-flex h-11 items-center justify-center gap-2 rounded-md px-3 text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="relative inline-flex h-11 items-center justify-center gap-2 rounded-lg px-3 text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       {children}
       {typeof count === "number" && count > 0 ? (

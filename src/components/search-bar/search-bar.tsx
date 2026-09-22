@@ -132,7 +132,7 @@ export function SearchWithDropdown({
 
 
       {isOpen ? (
-        <div className="absolute top-full left-0 right-0 z-50 overflow-hidden rounded-md border border-border bg-popover shadow-md">
+        <div className="absolute top-full left-0 right-0 z-50 overflow-hidden rounded-lg border border-border bg-popover shadow-md">
           {!hasQuery ? (
             <>
               {recentSearches.length > 0 && (
@@ -212,10 +212,10 @@ export function SearchWithDropdown({
                               alt=""
                               width={32}
                               height={32}
-                              className="h-8 w-8 shrink-0 rounded-md object-cover"
+                              className="h-8 w-8 shrink-0 rounded-lg object-cover"
                             />
                           ) : (
-                            <span className="h-8 w-8 shrink-0 rounded-md bg-muted" />
+                            <span className="h-8 w-8 shrink-0 rounded-lg bg-muted" />
                           )}
                           <span className="flex-1 truncate">
                             {category.name}
