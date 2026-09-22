@@ -1,15 +1,15 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import useEmblaCarousel from "embla-carousel-react"
-import { motion } from "motion/react"
-import { ArrowLeft, ArrowRight, Percent } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 
+import { ProductCard, type DealsProduct } from "@/components/deals"
+import { productCardService } from "@/components/product-card/product-card.service"
 import type { ProductDetailInfo } from "@/lib/schemas"
+import { toast } from "@/lib/toasts"
 import { cn } from "@/lib/utils"
-import { GALLERY_GRADIENTS } from "./product-detail.constants"
 import { productDetailService } from "./product-detail.service"
 
 export type RelatedProduct = {
@@ -32,8 +32,18 @@ type RelatedProductsProps = {
 
 type Mode = "related" | "similar"
 
-function formatINR(value: number): string {
-  return value.toLocaleString("en-IN")
+function imageFallback(slug: string): string {
+  return `https://picsum.photos/seed/${slug}/560/700`
+}
+
+function toDealsProduct(item: RelatedProduct): DealsProduct {
+  return {
+    image: item.image ?? imageFallback(item.slug),
+    name: item.name,
+    price: item.price,
+    originalPrice: item.wasPrice ?? item.price,
+    ...(item.discountPercent != null ? { discountPercent: item.discountPercent } : {}),
+  }
 }
 
 function RelatedProducts({ product, related, className }: RelatedProductsProps) {
@@ -44,6 +54,18 @@ function RelatedProducts({ product, related, className }: RelatedProductsProps) 
   const [mode, setMode] = React.useState<Mode>("related")
   const [similar, setSimilar] = React.useState<RelatedProduct[]>([])
   const [similarLoaded, setSimilarLoaded] = React.useState(false)
+  const [wished, setWished] = React.useState<Set<string>>(new Set())
+
+  async function toggleWish(item: RelatedProduct) {
+    const nowWished = await productCardService.toggleWishlist(toDealsProduct(item))
+    setWished((prev) => {
+      const next = new Set(prev)
+      if (nowWished) next.add(item.slug)
+      else next.delete(item.slug)
+      return next
+    })
+    toast.success(nowWished ? "Saved to wishlist" : "Removed from wishlist")
+  }
 
   const items = mode === "related" ? related : similar
   const roomHref = `/products?room=${encodeURIComponent(product.roomType)}`
@@ -67,11 +89,6 @@ function RelatedProducts({ product, related, className }: RelatedProductsProps) 
     }
   }, [mode, similarLoaded, product.slug, product.categoryPath])
 
-  const maxDiscount = related.reduce(
-    (max, item) => Math.max(max, item.discountPercent ?? 0),
-    0
-  )
-
   return (
     <section className={cn("border-t border-border bg-coral-10", className)}>
       <div className="mx-auto w-[94%] max-w-[1280px] py-16 md:w-[90%] lg:py-24">
@@ -86,7 +103,7 @@ function RelatedProducts({ product, related, className }: RelatedProductsProps) 
             </h2>
           </div>
           <div className="flex items-center gap-3">
-            <motion.span
+            {/* <motion.span
               initial={{ scale: 0.6, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -94,7 +111,7 @@ function RelatedProducts({ product, related, className }: RelatedProductsProps) 
             >
               <Percent className="size-3.5" strokeWidth={1.5} />
               Up to {Math.max(maxDiscount, 30)}% off
-            </motion.span>
+            </motion.span> */}
           </div>
         </div>
 
@@ -157,56 +174,18 @@ function RelatedProducts({ product, related, className }: RelatedProductsProps) 
         ) : (
           <div ref={viewportRef} className="overflow-hidden">
             <div className="-ml-4 flex *:ml-4 *:min-w-0">
-              {items.slice(0, 8).map((item, i) => (
+              {items.slice(0, 8).map((item) => (
                 <div
                   key={item.slug}
                   className="shrink-0 basis-[min(78vw,280px)] lg:basis-[240px]"
                 >
-                  <Link
-                    href={`/products/${item.slug}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl bg-surface-alt shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg"
-                  >
-                    <div className="relative aspect-4/5 overflow-hidden">
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          fill
-                          sizes="(max-width: 1024px) 78vw, 240px"
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div
-                          className="h-full w-full transition-transform duration-500 group-hover:scale-105"
-                          style={{
-                            background: GALLERY_GRADIENTS[(i + 1) % GALLERY_GRADIENTS.length],
-                          }}
-                        />
-                      )}
-                      {item.discountPercent ? (
-                        <span className="absolute top-3 left-3 rounded-full bg-brand-coral px-2 py-0.5 text-[11px] font-bold text-white">
-                          {item.discountPercent}% off
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="flex flex-1 flex-col gap-1 p-4">
-                      <p className="text-[0.6875rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
-                        {item.category}
-                      </p>
-                      <h3 className="line-clamp-1 text-base font-medium text-foreground transition-colors duration-200 group-hover:text-brand-magenta">
-                        {item.name}
-                      </h3>
-                      <div className="mt-auto flex items-baseline gap-2 pt-2">
-                        <span className="text-lg font-medium text-brand-magenta">
-                          ₹{formatINR(item.price)}
-                        </span>
-                        {item.wasPrice && (
-                          <span className="text-sm text-muted-foreground line-through">
-                            ₹{formatINR(item.wasPrice)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                  <Link href={`/products/${item.slug}`} className="block h-full">
+                    <ProductCard
+                      className="h-full"
+                      {...toDealsProduct(item)}
+                      wishlisted={wished.has(item.slug)}
+                      onWishlistToggle={() => toggleWish(item)}
+                    />
                   </Link>
                 </div>
               ))}
@@ -218,7 +197,7 @@ function RelatedProducts({ product, related, className }: RelatedProductsProps) 
         <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
             href={roomHref}
-            className="flex h-12 w-full items-center justify-center rounded-lg bg-brand-magenta px-8 text-white transition-all duration-200 hover:bg-brand sm:w-auto"
+            className="flex h-12 w-full items-center justify-center rounded-lg bg-primary px-8 text-white transition-all duration-200 hover:bg-brand-hover sm:w-auto"
           >
             Explore all {product.roomType} pieces
           </Link>

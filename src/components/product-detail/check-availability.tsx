@@ -44,7 +44,7 @@ function CheckAvailability({ className }: CheckAvailabilityProps) {
       <button
         type="submit"
         disabled={pincode.length !== 6 || status === "checking"}
-        className="h-11 shrink-0 rounded-lg bg-brand-magenta px-4 text-sm font-medium text-white transition-colors duration-200 hover:bg-brand disabled:opacity-40"
+        className="h-11 shrink-0 rounded-lg bg-primary px-4 text-sm font-medium text-white transition-colors duration-200 hover:bg-brand-hover disabled:opacity-40"
       >
         {status === "checking" ? "Checking…" : "Check"}
       </button>

@@ -54,11 +54,14 @@ function ProductDetailView({
   return (
     <motion.div
       {...pageMotion}
-      className={cn("bg-[oklch(1_0_0)] pb-24 lg:pb-0", className)}
+      className={cn(
+        "bg-[oklch(1_0_0)] pb-24 lg:pb-0",
+        className,
+      )}
     >
       {/* Breadcrumb */}
 
-      <div className="mx-auto w-[94%] max-w-7xl md:w-[90%] flex justify-start sm:justify-center">
+      <div className="mx-auto flex w-[94%] max-w-7xl justify-start md:w-[90%] sm:justify-center">
         {product.breadcrumb ? (
           <Breadcrumb items={product.breadcrumb} className="py-3" />
         ) : null}
@@ -66,7 +69,7 @@ function ProductDetailView({
 
       {/* Hero grid — gallery pinned, info rail scrolls */}
       <div className="mx-auto w-[94%] max-w-7xl md:w-[90%]">
-        <div className="grid grid-cols-1 gap-10 pt-2 pb-16 lg:grid-cols-[55fr_45fr] lg:items-start lg:gap-16 lg:pt-2 lg:pb-20">
+        <div className="grid grid-cols-1 gap-10 pt-2 pb-16 lg:grid-cols-[55fr_45fr] lg:items-start lg:gap-2 lg:pt-2 lg:pb-20">
           <div className="lg:sticky lg:top-[calc(var(--navbar-height-compact)+1.5rem)] lg:self-start">
             <ProductGallery
               images={images}

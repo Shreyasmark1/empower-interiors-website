@@ -46,27 +46,30 @@ function ProductCTA({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 px-6 py-3",
+        "flex flex-col gap-3 px-6 py-3 lg:flex-row",
         "sticky bottom-0 z-20 -mx-6 border-t bg-white/92 backdrop-blur-lg",
         "lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none",
         className,
       )}
       style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
     >
-      <AddToCart product={{ name, image, price, wasPrice }} />
+      <AddToCart
+        product={{ name, image, price, wasPrice }}
+        className="lg:flex-1"
+      />
       <a
         href={buildWhatsAppHref(name, roomType)}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#22c55e] text-white shadow-[0_10px_30px_rgba(34,197,94,0.32)] transition-all duration-200 hover:bg-[#16a34a]"
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-[#22c55e] text-white shadow-[0_10px_30px_rgba(34,197,94,0.32)] transition-all duration-200 hover:bg-[#16a34a] lg:w-auto lg:flex-1"
       >
         <WhatsAppIcon className="size-5" />
         Chat on WhatsApp
       </a>
-      <div className="flex gap-2">
+      <div className="flex gap-2 lg:flex-1">
         <Link
           href={buildConsultationHref(slug, roomType)}
-          className="flex h-12 flex-1 items-center justify-center rounded-lg bg-brand-magenta text-white transition-all duration-200 hover:bg-brand"
+          className="flex h-12 flex-1 items-center justify-center rounded-lg bg-primary text-white transition-all duration-200 hover:bg-brand-hover"
         >
           Get Free Consultation
         </Link>

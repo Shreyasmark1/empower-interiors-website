@@ -32,7 +32,7 @@ function AddToCart({ product, className }: AddToCartProps) {
   return (
     <div
       className={cn(
-        "flex h-12 w-full overflow-hidden rounded-lg bg-(image:--bg-logo-gradient) text-white shadow-[0_10px_30px_rgba(87,0,84,0.28)]",
+        "flex h-12 w-full overflow-hidden rounded-lg bg-primary text-white shadow-[0_10px_30px_rgba(87,0,84,0.28)]",
         className
       )}
     >
@@ -43,7 +43,7 @@ function AddToCart({ product, className }: AddToCartProps) {
             aria-label="Decrease quantity"
             disabled={quantity <= 1}
             onClick={() => setQuantity((current) => current - 1)}
-            className="grid h-full flex-1 place-items-center transition-all duration-200 hover:brightness-95 active:brightness-90 disabled:opacity-50"
+            className="grid h-full flex-1 place-items-center transition-all duration-200 hover:bg-brand-hover active:bg-brand-hover disabled:opacity-50"
           >
             <Minus className="size-4" strokeWidth={2} />
           </button>
@@ -57,7 +57,7 @@ function AddToCart({ product, className }: AddToCartProps) {
             type="button"
             aria-label="Increase quantity"
             onClick={() => setQuantity((current) => current + 1)}
-            className="grid h-full flex-1 place-items-center transition-all duration-200 hover:brightness-95 active:brightness-90"
+            className="grid h-full flex-1 place-items-center transition-all duration-200 hover:bg-brand-hover active:bg-brand-hover"
           >
             <Plus className="size-4" strokeWidth={2} />
           </button>
@@ -66,7 +66,7 @@ function AddToCart({ product, className }: AddToCartProps) {
         <button
           type="button"
           onClick={onAdd}
-          className="flex h-full w-full items-center justify-center gap-2 text-sm font-medium transition-all duration-200 hover:brightness-95 active:brightness-90"
+          className="flex h-full w-full items-center justify-center gap-2 text-sm font-medium transition-all duration-200 hover:bg-brand-hover active:bg-brand-hover"
         >
           <ShoppingCart className="size-4" strokeWidth={1.5} />
           Add

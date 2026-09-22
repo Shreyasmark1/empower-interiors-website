@@ -97,6 +97,7 @@ export const mockProductDetailPages: ProductDetailRaw[] = [
         roomType: "Living Room",
         categoryPath: ["Seating", "Living Room", "Tables"],
         price: 8499,
+        wasPrice: 12999,
         priceDisplay: "₹8,499",
       },
       {
@@ -178,6 +179,7 @@ export const mockProductDetailPages: ProductDetailRaw[] = [
         roomType: "Dining Room",
         categoryPath: ["Dining", "Dining Room", "Dining Tables"],
         price: 7499,
+        wasPrice: 10499,
         priceDisplay: "₹7,499",
       },
       {
@@ -270,6 +272,7 @@ export const mockProductDetailPages: ProductDetailRaw[] = [
         roomType: "Bedroom",
         categoryPath: ["Storage", "Bedroom", "Beds"],
         price: 6499,
+        wasPrice: 8999,
         priceDisplay: "₹6,499",
       },
       {
@@ -291,6 +294,7 @@ export const mockProductDetailPages: ProductDetailRaw[] = [
         roomType: "Bedroom",
         categoryPath: ["Lighting", "Bedroom", "Table Lamps"],
         price: 3499,
+        wasPrice: 4999,
         priceDisplay: "₹3,499",
       },
     ],
