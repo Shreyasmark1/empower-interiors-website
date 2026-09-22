@@ -30,11 +30,16 @@ type Story = StoryObj<typeof meta>;
 export const FullWidth: Story = {};
 
 export const InContainer: Story = {
+  args: {
+    height: 1000,
+    src: "https://picsum.photos/seed/announce/1676/400"
+  },
+
   render: (args) => (
     <Container>
       <AnnouncementStrip {...args} />
     </Container>
-  ),
+  )
 };
 
 export const NoDimensions: Story = {

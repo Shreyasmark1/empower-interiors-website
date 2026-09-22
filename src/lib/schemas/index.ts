@@ -7,3 +7,4 @@ export * from "./hero";
 export * from "./catalog";
 export * from "./filter";
 export * from "./category";
+export * from "./category-page";
