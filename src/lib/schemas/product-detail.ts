@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { BreadcrumbItemSchema } from "./catalog"
+
 export const GalleryImageSchema = z.object({
   id: z.string().min(1),
   gradient: z.string().min(1),
@@ -86,6 +88,7 @@ export const ProductDetailDisplayBaseSchema = z.object({
   careInstructions: z.array(z.string().min(1)),
   deliveryInfo: z.array(z.string().min(1)),
   installationInfo: z.array(z.string().min(1)),
+  breadcrumb: z.array(BreadcrumbItemSchema),
 })
 
 export type ProductDetailDisplayBase = z.infer<

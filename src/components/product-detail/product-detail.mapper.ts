@@ -62,6 +62,16 @@ export function toProductDetail(raw: ProductDetailRaw): ProductDetailInfo {
     has3d: raw.has3d,
     frames: raw.frames,
     modelUrl: raw.modelUrl,
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      ...(raw.categoryPath?.length ? raw.categoryPath : [raw.category, raw.roomType]).map(
+        (label) => ({
+          label,
+          href: `/products?room=${encodeURIComponent(label)}`,
+        })
+      ),
+      { label: raw.name, href: `/products/${raw.slug}` },
+    ],
     specifications: Object.entries(raw.specifications).map(([label, value]) => ({
       label,
       value,

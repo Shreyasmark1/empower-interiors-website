@@ -26,20 +26,27 @@ function Breadcrumb({ items, className }: BreadcrumbProps) {
     >
       {items.map((item, index) => {
         const isLast = index === items.length - 1
+        const hideOnMobile = index < items.length - 2
 
         return (
-          <span key={item.href} className="flex items-center gap-2">
+          <span
+            key={item.href}
+            className={cn(
+              "flex items-center gap-2 min-w-0",
+              hideOnMobile && "hidden sm:flex"
+            )}
+          >
             {index > 0 ? (
               <ChevronRight className="size-3.5 text-muted-foreground" />
             ) : null}
             {isLast ? (
-              <span className="truncate text-muted-foreground/80">
+              <span className="min-w-0 truncate text-muted-foreground/80">
                 {item.label}
               </span>
             ) : (
               <Link
                 href={item.href}
-                className="text-brand-magenta transition-colors hover:text-brand"
+                className="whitespace-nowrap text-brand-magenta transition-colors hover:text-brand"
               >
                 {item.label}
               </Link>

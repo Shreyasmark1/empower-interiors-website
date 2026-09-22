@@ -41,3 +41,18 @@ export const LongTrail: Story = {
     ],
   },
 }
+
+export const LongProductName: Story = {
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+  args: {
+    items: [
+      { label: "Home", href: "/" },
+      { label: "Seating", href: "/seating" },
+      { label: "Living Room", href: "/products?room=Living Room" },
+      { label: "Sofas", href: "/seating/sofas" },
+      { label: "Lem Velvet 3 Seater Sofa in Teal Blue Colour", href: "/products/lem-velvet-3-seater-sofa" },
+    ],
+  },
+}
