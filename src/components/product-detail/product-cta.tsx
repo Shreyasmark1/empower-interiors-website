@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone } from "lucide-react";
+import { MessageCircle, Phone } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { AddToCart } from "./add-to-cart";
@@ -68,12 +68,13 @@ function ProductCTA({
         <WhatsAppIcon className="size-5" />
         Chat on WhatsApp
       </a>
-      <div className="flex gap-2 lg:flex-1">
+      <div className="flex gap-1 lg:flex-1">
         <Link
           href={buildConsultationHref(slug, roomType)}
-          className={cn(CTA_PRIMARY, "flex-1")}
+          className={cn(CTA_PRIMARY, "flex-1 p-2")}
         >
-          Get Free Consultation
+          <MessageCircle className="size-5" strokeWidth={1.5} />
+          Enquire
         </Link>
         <a
           href={CONTACT.telHref}

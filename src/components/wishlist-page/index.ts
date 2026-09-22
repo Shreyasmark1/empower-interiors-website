@@ -1,0 +1,1 @@
+export { WishlistPage, type WishlistPageProps } from "./wishlist-page"

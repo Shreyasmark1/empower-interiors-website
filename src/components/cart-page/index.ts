@@ -1,0 +1,1 @@
+export { CartPage, type CartPageProps } from "./cart-page"

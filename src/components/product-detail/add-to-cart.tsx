@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Minus, Plus, ShoppingCart } from "lucide-react"
 
-import { productCardService } from "@/components/product-card/product-card.service"
+import { cartService } from "@/lib/services/cart.service"
 import { toast } from "@/lib/toasts"
 import { cn } from "@/lib/utils"
 
@@ -23,10 +23,42 @@ function AddToCart({ product, className }: AddToCartProps) {
   const [open, setOpen] = React.useState(false)
   const [quantity, setQuantity] = React.useState(1)
 
+  React.useEffect(() => {
+    const sync = () => {
+      const line = cartService
+        .getCartLines()
+        .find((item) => item.product.name === product.name)
+      setOpen(Boolean(line))
+      setQuantity(line ? line.quantity : 1)
+    }
+    sync()
+    return cartService.subscribe(sync)
+  }, [product.name])
+
   async function onAdd() {
+    cartService.addToCart(product)
     setOpen(true)
-    await productCardService.addToCart(product)
+    setQuantity(1)
     toast.success(`${product.name} added to your cart`)
+  }
+
+  function onDecrease() {
+    const next = quantity - 1
+    if (next < 1) {
+      cartService.removeFromCart(product.name)
+      setOpen(false)
+      setQuantity(1)
+      toast.success(`${product.name} removed from your cart`)
+      return
+    }
+    cartService.setCartQuantity(product.name, next)
+    setQuantity(next)
+  }
+
+  function onIncrease() {
+    const next = quantity + 1
+    cartService.setCartQuantity(product.name, next)
+    setQuantity(next)
   }
 
   return (
@@ -41,9 +73,8 @@ function AddToCart({ product, className }: AddToCartProps) {
           <button
             type="button"
             aria-label="Decrease quantity"
-            disabled={quantity <= 1}
-            onClick={() => setQuantity((current) => current - 1)}
-            className="grid h-full flex-1 place-items-center transition-all duration-200 hover:bg-brand-hover active:bg-brand-hover disabled:opacity-50"
+            onClick={onDecrease}
+            className="grid h-full flex-1 place-items-center transition-all duration-200 hover:bg-brand-hover active:bg-brand-hover"
           >
             <Minus className="size-4" strokeWidth={2} />
           </button>
@@ -56,7 +87,7 @@ function AddToCart({ product, className }: AddToCartProps) {
           <button
             type="button"
             aria-label="Increase quantity"
-            onClick={() => setQuantity((current) => current + 1)}
+            onClick={onIncrease}
             className="grid h-full flex-1 place-items-center transition-all duration-200 hover:bg-brand-hover active:bg-brand-hover"
           >
             <Plus className="size-4" strokeWidth={2} />

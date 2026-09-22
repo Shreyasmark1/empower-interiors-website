@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useSyncExternalStore, useState } from "react";
 
 import { HeaderActions } from "@/components/header-actions";
 import { Logo, MobileLogo } from "@/components/logo";
@@ -14,6 +15,7 @@ import {
   MenuIcon,
   WishlistIcon,
 } from "@/lib/icons";
+import { cartService } from "@/lib/services/cart.service";
 import { cn } from "@/lib/utils";
 
 type HeaderProps = {
@@ -53,6 +55,21 @@ function Header({
   onCart,
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const cartCount = useSyncExternalStore(
+    cartService.subscribe,
+    cartService.getCartCount,
+    () => 0,
+  );
+  const wishlistCount = useSyncExternalStore(
+    cartService.subscribe,
+    cartService.getWishlistCount,
+    () => 0,
+  );
+
+  const handleWishlist = onWishlist ?? (() => router.push("/wishlist"));
+  const handleCart = onCart ?? (() => router.push("/cart"));
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -89,14 +106,14 @@ function Header({
           </div>
 
           <div className="flex items-center gap-4">
-            <MobileIconButton label="Wishlist" onClick={onWishlist}>
+            <MobileIconButton label="Wishlist" onClick={handleWishlist}>
               <HugeiconsIcon
                 icon={WishlistIcon}
                 strokeWidth={2}
                 className="size-6 shrink-0"
               />
             </MobileIconButton>
-            <MobileIconButton label="Cart" onClick={onCart}>
+            <MobileIconButton label="Cart" onClick={handleCart}>
               <CartIcon className="size-6 shrink-0" />
             </MobileIconButton>
           </div>
@@ -136,8 +153,10 @@ function Header({
             className="justify-self-end"
             onLogin={onLogin}
             onContact={onContact}
-            onWishlist={onWishlist}
-            onCart={onCart}
+            onWishlist={handleWishlist}
+            onCart={handleCart}
+            cartCount={cartCount}
+            wishlistCount={wishlistCount}
           />
         </header>
 
