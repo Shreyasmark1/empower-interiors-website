@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useSyncExternalStore, useState } from "react";
 
 import { HeaderActions } from "@/components/header-actions";
@@ -33,6 +34,15 @@ const SEARCH_SLUG_BY_LABEL = new Map(
   SEARCH_SUGGESTIONS.map((item) => [item.label, item.slug]),
 );
 
+function shouldHideMobileCategoryNav(pathname: string): boolean {
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length === 0) return false;
+  const top = segments[0];
+  if (top === "wishlist" || top === "cart") return true;
+  if (top === "products") return segments.length >= 1;
+  return segments.length >= 2;
+}
+
 function MobileIconButton({
   label,
   onClick,
@@ -63,6 +73,8 @@ function Header({
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const hideMobileCategoryNav = shouldHideMobileCategoryNav(pathname);
 
   const cartCount = useSyncExternalStore(
     cartService.subscribe,
@@ -124,7 +136,9 @@ function Header({
                 className="size-6 shrink-0"
               />
             </MobileIconButton>
-            <MobileLogo className="h-8 w-8" />
+            <Link href="/" aria-label="Empower Interiors — Home">
+              <MobileLogo className="h-8 w-8" />
+            </Link>
           </div>
 
           <div className="flex items-center gap-4">
@@ -150,7 +164,7 @@ function Header({
           />
         </div>
 
-        <MobileCategoryNav />
+        {hideMobileCategoryNav ? null : <MobileCategoryNav />}
       </div>
 
       {/* Mobile slide-in menu */}
@@ -178,7 +192,9 @@ function Header({
             />
           </div>
 
-           <Logo className="shrink-0 text-2xl" />
+           <Link href="/" aria-label="Empower Interiors — Home">
+              <Logo className="shrink-0 text-2xl" />
+            </Link>
 
           <HeaderActions
             className="justify-self-end"

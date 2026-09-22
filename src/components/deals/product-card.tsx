@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon, WishlistIcon } from "@/lib/icons";
@@ -13,6 +14,7 @@ export type DealsProduct = {
   discountPercent?: number;
   wishlisted?: boolean;
   onWishlistToggle?: () => void;
+  href?: string;
 };
 
 function discountFrom(price: number, originalPrice: number): number {
@@ -28,12 +30,13 @@ function ProductCard({
   discountPercent,
   wishlisted = false,
   onWishlistToggle,
+  href,
   className,
 }: DealsProduct & { className?: string }) {
   const discount = discountPercent ?? discountFrom(price, originalPrice);
 
-  return (
-    <div className={cn("group flex h-full w-full flex-col", className)}>
+  const content = (
+    <>
       {/* Image */}
       <div className="relative aspect-square w-full overflow-hidden rounded-md bg-surface-alt">
         <Image
@@ -77,8 +80,27 @@ function ProductCard({
           <span className="text-sm font-bold text-discount">{discount}% OFF</span>
         </div>
       </div>
+    </>
+  );
+
+  const inner = (
+    <div className={cn("group flex h-full w-full flex-col", className)}>
+      {content}
     </div>
   );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="flex h-full w-full flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+      >
+        {inner}
+      </Link>
+    );
+  }
+
+  return inner;
 }
 
 export { ProductCard };

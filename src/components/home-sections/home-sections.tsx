@@ -6,74 +6,39 @@ import { TextStrip } from "@/components/text-strip";
 import { DealsGrid, type DealsProduct } from "@/components/deals";
 import { RoomInspiration } from "@/components/room-inspiration";
 import { FreshFinds, type DealsProduct as FreshFindsProduct } from "@/components/fresh-finds";
+import { mockCatalog } from "@/components/product-listing";
+
+function catalogProduct(slug: string): DealsProduct {
+  const product = mockCatalog.find((item) => item.slug === slug);
+  if (!product) {
+    throw new Error(`Missing mock product: ${slug}`);
+  }
+  return {
+    image: product.image,
+    name: product.name,
+    price: product.price,
+    originalPrice: product.wasPrice ?? product.price,
+    ...(product.discountPercent != null
+      ? { discountPercent: product.discountPercent }
+      : {}),
+    href: `/products/${product.slug}`,
+  };
+}
 
 const freshFindsProducts: FreshFindsProduct[] = [
-  {
-    image: "https://picsum.photos/seed/fresh-1/370/370",
-    name: "Bamboo Planter",
-    price: 349,
-    originalPrice: 499,
-  },
-  {
-    image: "https://picsum.photos/seed/fresh-2/370/370",
-    name: "Linen Cushion Cover",
-    price: 299,
-    originalPrice: 399,
-  },
-  {
-    image: "https://picsum.photos/seed/fresh-3/370/370",
-    name: "Brass Table Lamp",
-    price: 1199,
-    originalPrice: 1799,
-    discountPercent: 33,
-  },
-  {
-    image: "https://picsum.photos/seed/fresh-4/370/370",
-    name: "Ceramic Diffuser",
-    price: 550,
-    originalPrice: 750,
-  },
-  {
-    image: "https://picsum.photos/seed/fresh-5/370/370",
-    name: "Oak Wall Shelf",
-    price: 899,
-    originalPrice: 1200,
-  },
+  catalogProduct("mira-cane-armchair"),
+  catalogProduct("ceramic-vase-trio"),
+  catalogProduct("sloane-2-seater-sofa"),
+  catalogProduct("sloane-sofa-cum-bed"),
+  catalogProduct("harlow-fabric-lounge-chair"),
 ];
 
 const dealsProducts: DealsProduct[] = [
-  {
-    image: "https://picsum.photos/seed/deal-1/370/370",
-    name: "Linen Armchair",
-    price: 1299,
-    originalPrice: 1899,
-  },
-  {
-    image: "https://picsum.photos/seed/deal-2/370/370",
-    name: "Walnut Coffee Table",
-    price: 899,
-    originalPrice: 1599,
-    discountPercent: 44,
-  },
-  {
-    image: "https://picsum.photos/seed/deal-3/370/370",
-    name: "Pendant Lamp",
-    price: 345,
-    originalPrice: 1499,
-    discountPercent: 77,
-  },
-  {
-    image: "https://picsum.photos/seed/deal-4/370/370",
-    name: "Accent Stool",
-    price: 640,
-    originalPrice: 1099,
-  },
-  {
-    image: "https://picsum.photos/seed/deal-5/370/370",
-    name: "Ceramic Vase Set",
-    price: 460,
-    originalPrice: 560,
-  },
+  catalogProduct("lem-velvet-3-seater-sofa"),
+  catalogProduct("lennox-l-shaped-sofa"),
+  catalogProduct("knox-velvet-recliner"),
+  catalogProduct("rustic-wood-dining-table"),
+  catalogProduct("ashwood-open-bookshelf"),
 ];
 
 function HomeSections() {

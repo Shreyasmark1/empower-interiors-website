@@ -103,7 +103,7 @@ function ProductListingView({
   <ProductFilterContainer />
 
       {listing.subcategories.length > 0 ? (
-        <Container className="pt-4 pb-6">
+        <Container className="pt-4 pb-6 hidden md:block">
           {/* Subcategories contained in the current node */}
           <div className="flex flex-wrap gap-2.5">
             {listing.subcategories.map((sub) => (
