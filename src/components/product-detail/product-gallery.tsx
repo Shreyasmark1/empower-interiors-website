@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { Maximize2 } from "lucide-react"
+import { Heart, Maximize2 } from "lucide-react"
 
 import { useMediaQuery } from "@/lib/use-media-query"
 import type { GalleryImage } from "@/lib/schemas"
@@ -21,6 +21,8 @@ type ProductGalleryProps = {
   has3d?: boolean
   frames?: string[]
   modelUrl?: string
+  wishlisted?: boolean
+  onWishlistToggle?: () => void
   className?: string
 }
 
@@ -31,6 +33,8 @@ function ProductGallery({
   has3d = true,
   frames = [],
   modelUrl,
+  wishlisted = false,
+  onWishlistToggle,
   className,
 }: ProductGalleryProps) {
   const isDesktop = useMediaQuery("(min-width: 1024px)")
@@ -115,7 +119,7 @@ function ProductGallery({
               <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-24 bg-gradient-to-t from-black/25 to-transparent" />
 
               {/* Zoom hint */}
-              <span className="pointer-events-none absolute right-4 bottom-4 z-30 hidden items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100 lg:flex">
+              <span className="pointer-events-none absolute right-16 bottom-4 z-30 hidden items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100 lg:flex">
                 <Maximize2 className="size-3.5" />
                 Zoom
               </span>
@@ -132,6 +136,29 @@ function ProductGallery({
                 productName={productName}
                 className="absolute top-4 left-4 z-30"
               />
+
+              {/* Wishlist */}
+              {onWishlistToggle && (
+                <button
+                type="button"
+                aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                aria-pressed={wishlisted}
+                onClick={(event) => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  onWishlistToggle?.()
+                }}
+                className="absolute right-4 bottom-4 z-30 grid size-10 place-items-center rounded-full bg-white/90 shadow-md backdrop-blur-sm transition-transform duration-200 hover:scale-105"
+              >
+                <Heart
+                  className={cn(
+                    "size-5",
+                    wishlisted ? "fill-brand-coral text-brand-coral" : "text-foreground"
+                  )}
+                  strokeWidth={1.5}
+                />
+              </button>
+              )}
             </div>
 
             <div

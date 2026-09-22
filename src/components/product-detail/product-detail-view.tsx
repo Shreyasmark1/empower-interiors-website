@@ -5,9 +5,11 @@ import { motion } from "motion/react";
 
 import { BenefitsStrip } from "@/components/benefits-strip";
 import { PaymentOptions } from "@/components/payment-options";
+import { productCardService } from "@/components/product-card/product-card.service";
 import { SuggestProduct } from "@/components/suggest-product";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { GalleryImage, ProductDetailInfo } from "@/lib/schemas";
+import { toast } from "@/lib/toasts";
 import { cn } from "@/lib/utils";
 import { pageMotion } from "./product-detail.constants";
 import { ProductGallery } from "./product-gallery";
@@ -50,14 +52,22 @@ function ProductDetailView({
     string | undefined
   >(product.variants[0]?.id);
   const images = variantImages(product, activeVariantId);
+  const [wished, setWished] = React.useState(false);
+
+  async function onWishlistToggle() {
+    const nowWished = await productCardService.toggleWishlist({
+      name: product.name,
+      image: product.gallery[0]?.imageSrc ?? "",
+      price: product.price,
+    });
+    setWished(nowWished);
+    toast.success(nowWished ? "Saved to wishlist" : "Removed from wishlist");
+  }
 
   return (
     <motion.div
       {...pageMotion}
-      className={cn(
-        "bg-[oklch(1_0_0)] pb-24 lg:pb-0",
-        className,
-      )}
+      className={cn("bg-[oklch(1_0_0)] pb-24 lg:pb-0", className)}
     >
       {/* Breadcrumb */}
 
@@ -78,6 +88,8 @@ function ProductDetailView({
               has3d={product.has3d}
               frames={product.frames}
               modelUrl={product.modelUrl}
+              wishlisted={wished}
+              onWishlistToggle={onWishlistToggle}
             />
           </div>
 
@@ -86,6 +98,8 @@ function ProductDetailView({
               product={product}
               activeVariantId={activeVariantId}
               onVariantChange={setActiveVariantId}
+              wishlisted={wished}
+              onWishlistToggle={onWishlistToggle}
             />
             <PaymentOptions />
             <BenefitsStrip />

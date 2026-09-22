@@ -17,6 +17,8 @@ type ProductInfoProps = {
   product: ProductDetailInfo
   activeVariantId?: string
   onVariantChange: (id: string) => void
+  wishlisted?: boolean
+  onWishlistToggle?: () => void
   className?: string
 }
 
@@ -24,9 +26,12 @@ function ProductInfo({
   product,
   activeVariantId,
   onVariantChange,
+  wishlisted,
+  onWishlistToggle,
   className,
 }: ProductInfoProps) {
-  const [wished, setWished] = React.useState(false)
+  const [localWished, setLocalWished] = React.useState(false)
+  const wished = wishlisted ?? localWished
   const toneClass =
     product.availabilityTone === "green" ? "bg-[#16a34a]" : "bg-amber-500"
 
@@ -36,13 +41,13 @@ function ProductInfo({
     ? Math.round((1 - product.price / product.wasPrice) * 100)
     : 0
 
-  async function onWishlistToggle() {
+  async function handleWishlistToggle() {
     const nowWished = await productCardService.toggleWishlist({
       name: product.name,
       image: product.gallery[0]?.imageSrc ?? "",
       price,
     })
-    setWished(nowWished)
+    setLocalWished(nowWished)
     toast.success(nowWished ? "Saved to wishlist" : "Removed from wishlist")
   }
 
@@ -66,7 +71,7 @@ function ProductInfo({
             type="button"
             aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
             aria-pressed={wished}
-            onClick={onWishlistToggle}
+            onClick={onWishlistToggle ?? handleWishlistToggle}
             className="ml-auto grid size-9 place-items-center rounded-full transition-all duration-200 hover:bg-plum-5"
           >
             <Heart
