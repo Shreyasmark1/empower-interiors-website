@@ -39,3 +39,44 @@ export const ProductDetailRowSchema = ProductRowSchema.extend({
 });
 
 export type ProductDetailRow = z.infer<typeof ProductDetailRowSchema>;
+
+export const PromotionRowSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  title: z.string().nullable(),
+  description: z.string().nullable(),
+  image: z.string().nullable(),
+  mobileImage: z.string().nullable(),
+  linkUrl: z.string().nullable(),
+  buttonText: z.string().nullable(),
+  startsAt: z.string().nullable(),
+  endsAt: z.string().nullable(),
+  sortOrder: z.number(),
+  isActive: z.boolean(),
+  isDeleted: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
+export type PromotionRow = z.infer<typeof PromotionRowSchema>;
+
+export const PromotionTargetRowSchema = z.object({
+  id: z.number(),
+  promotionId: z.number(),
+  targetType: z.enum(["homepage", "category", "product"]),
+  categoryId: z.number().nullable(),
+  productId: z.number().nullable(),
+  placement: z.enum(["hero", "banner", "section"]),
+  sortOrder: z.number(),
+  isDeleted: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+
+export type PromotionTargetRow = z.infer<typeof PromotionTargetRowSchema>;
+
+export const PromotionDetailRowSchema = PromotionRowSchema.extend({
+  targets: z.array(PromotionTargetRowSchema),
+});
+
+export type PromotionDetailRow = z.infer<typeof PromotionDetailRowSchema>;

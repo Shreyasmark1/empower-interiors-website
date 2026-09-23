@@ -65,7 +65,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-svh items-center justify-center bg-muted/30 px-4 py-10">
-      <Card className="w-full max-w-[28rem]">
+      <Card className="w-full max-w-112">
         <CardHeader className="text-center">
           <div className="mx-auto flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <HugeiconsIcon
