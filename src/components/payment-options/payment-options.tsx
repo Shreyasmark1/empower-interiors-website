@@ -8,7 +8,7 @@ import {
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { PAYMENT_OPTIONS } from "@/components/product-detail/product-detail.constants"
+import { PAYMENT_OPTIONS } from "@/components/product-detail/services"
 import { cn } from "@/lib/utils"
 
 export type PaymentOption = { label: string; icon: LucideIcon }

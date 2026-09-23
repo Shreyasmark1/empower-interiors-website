@@ -1,5 +1,5 @@
-import { mockProductDetailPages } from "./product-detail.mock"
-import { toProductDetail, toRelatedProductCard } from "./product-detail.mapper"
+import { mockProductDetailPages } from "./services/product-detail.mock"
+import { toProductDetail, toRelatedProductCard } from "./services/product-detail.mapper"
 
 export const SOFA = toProductDetail(mockProductDetailPages[0])
 export const DINING = toProductDetail(mockProductDetailPages[1])

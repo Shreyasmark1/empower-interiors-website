@@ -1,4 +1,4 @@
-import { mockCatalog } from "@/components/product-listing/product-listing.mock"
+import { mockCatalog } from "@/components/product-listing"
 import type { CatalogProductVariant } from "@/lib/schemas"
 
 export type CartLineProduct = {

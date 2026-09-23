@@ -1,6 +1,6 @@
 "use client";
 
-import { LoginButton } from "@/components/Login-Button/login-button";
+import { LoginButton } from "@/components/login-button";
 import { CloseIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 

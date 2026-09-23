@@ -1,0 +1,1 @@
+export { PrimaryHeroBanner } from "./primary-hero-banner"

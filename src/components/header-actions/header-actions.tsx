@@ -1,4 +1,4 @@
-import { LoginButton } from "@/components/Login-Button/login-button";
+import { LoginButton } from "@/components/login-button";
 import {
   CartIcon,
   ContactIcon,

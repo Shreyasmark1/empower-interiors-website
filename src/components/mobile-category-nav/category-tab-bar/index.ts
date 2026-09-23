@@ -1,0 +1,1 @@
+export { CategoryTabBar } from "./category-tab-bar"

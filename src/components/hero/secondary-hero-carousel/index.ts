@@ -1,0 +1,1 @@
+export { SecondaryHeroCarousel } from "./secondary-hero-carousel"

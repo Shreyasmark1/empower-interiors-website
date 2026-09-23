@@ -1,0 +1,1 @@
+export { DealsCTA } from "./deals-cta"
