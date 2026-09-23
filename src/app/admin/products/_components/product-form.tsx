@@ -23,8 +23,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { Category, ProductDetailRow, ProductRow } from "@/lib/schemas";
-import { createOrUpdate } from "../../../_lib/crud";
-import { AdminApiError } from "../../../_lib/api";
+import { createOrUpdate } from "../../_lib/crud";
+import { AdminApiError } from "../../_lib/api";
 
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -168,7 +168,7 @@ export function ProductForm({ categories, initial }: ProductFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid max-w-xl gap-4"
+        className="grid max-w-[36rem] gap-4"
       >
         <FormField
           control={form.control}

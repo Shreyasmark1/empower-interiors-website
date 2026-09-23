@@ -5,12 +5,18 @@ import { redirect, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { LoginSquare01Icon } from "@hugeicons/core-free-icons";
+import { DashboardSquare02Icon } from "@hugeicons/core-free-icons";
 
 import { LoginSchema, type LoginInput } from "@/lib/schemas/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -58,28 +64,38 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-svh items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="items-center text-center">
-          <div className="mb-2 flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <HugeiconsIcon icon={LoginSquare01Icon} strokeWidth={2} className="size-6" />
+    <div className="flex min-h-svh items-center justify-center bg-muted/30 px-4 py-10">
+      <Card className="w-full max-w-[28rem]">
+        <CardHeader className="text-center">
+          <div className="mx-auto flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <HugeiconsIcon
+              icon={DashboardSquare02Icon}
+              strokeWidth={2}
+              className="size-6"
+            />
           </div>
-          <CardTitle className="text-lg font-semibold">Admin sign in</CardTitle>
+          <CardTitle className="pt-3 text-lg font-semibold">
+            Empower Admin Console
+          </CardTitle>
           <CardDescription>
-            Enter your credentials to access the Empower admin console.
+            Sign in to manage your catalogue, products, and promotions.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-2">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5">
               <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="grid gap-2">
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="username" autoComplete="username" {...field} />
+                      <Input
+                        placeholder="username"
+                        autoComplete="username"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -89,7 +105,7 @@ export default function LoginPage() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="grid gap-2">
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
@@ -108,13 +124,17 @@ export default function LoginPage() {
                   {error}
                 </p>
               )}
-              <Button type="submit" disabled={form.formState.isSubmitting}>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="w-full"
+              >
                 {form.formState.isSubmitting ? "Signing in…" : "Sign in"}
               </Button>
             </form>
           </Form>
         </CardContent>
       </Card>
-    </main>
+    </div>
   );
 }

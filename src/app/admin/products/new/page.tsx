@@ -32,7 +32,7 @@ export default function NewProductPage() {
   }, []);
 
   return (
-    <div className="grid max-w-2xl gap-6">
+    <div className="grid max-w-[42rem] gap-6">
       <PageHeader
         title="New product"
         description="Create a new catalogue product."

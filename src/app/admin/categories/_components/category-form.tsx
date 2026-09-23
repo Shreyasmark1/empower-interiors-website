@@ -145,7 +145,7 @@ export function CategoryForm({ categories, initial }: CategoryFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid max-w-xl gap-4"
+        className="grid max-w-[36rem] gap-4"
       >
         <FormField
           control={form.control}

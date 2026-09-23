@@ -23,7 +23,15 @@ export default function AdminLayout({
   const isHydrated = useIsHydrated();
 
   if (!isHydrated) {
-    return null;
+    return (
+      <div className="flex min-h-svh items-center justify-center bg-muted/30">
+        <div
+          role="status"
+          aria-label="Loading"
+          className="size-8 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-primary"
+        />
+      </div>
+    );
   }
 
   if (pathname !== "/admin/login" && !isLoggedIn()) {

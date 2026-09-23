@@ -22,7 +22,7 @@ export default function NewCategoryPage() {
   }, []);
 
   return (
-    <div className="grid max-w-2xl gap-6">
+    <div className="grid max-w-[42rem] gap-6">
       <PageHeader
         title="New category"
         description="Create a new catalogue category."

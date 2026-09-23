@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import type { Category } from "@/lib/schemas";
+import type { ProductRow, VariantRow } from "@/lib/schemas";
 import { PageHeader } from "../../../_components/page-header";
 import { getItem, listItems } from "../../../_lib/crud";
 import { AdminApiError } from "../../../_lib/api";
-import { CategoryForm } from "../../_components/category-form";
+import { VariantForm } from "../../_components/variant-form";
 
-export default function EditCategoryPage() {
+export default function EditVariantPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
 
-  const [category, setCategory] = useState<Category | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [variant, setVariant] = useState<VariantRow | null>(null);
+  const [products, setProducts] = useState<ProductRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,18 +22,18 @@ export default function EditCategoryPage() {
     let cancelled = false;
 
     Promise.all([
-      getItem<Category>(`/categories/${id}`),
-      listItems<Category>("/categories", { limit: "100" }),
+      getItem<VariantRow>(`/variants/${id}`),
+      listItems<ProductRow>("/products", { limit: "100" }),
     ])
       .then(([item, list]) => {
         if (cancelled) return;
-        setCategory(item);
-        setCategories(list.items);
+        setVariant(item);
+        setProducts(list.items);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
         setError(
-          err instanceof AdminApiError ? err.message : "Failed to load category"
+          err instanceof AdminApiError ? err.message : "Failed to load variant"
         );
       })
       .finally(() => {
@@ -47,7 +47,7 @@ export default function EditCategoryPage() {
 
   return (
     <div className="grid max-w-[42rem] gap-6">
-      <PageHeader title="Edit category" description="Update category details." />
+      <PageHeader title="Edit variant" description="Update variant details." />
       {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
       {error && (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -55,7 +55,7 @@ export default function EditCategoryPage() {
         </p>
       )}
       {!loading && !error && (
-        <CategoryForm categories={categories} initial={category} />
+        <VariantForm products={products} initial={variant} />
       )}
     </div>
   );

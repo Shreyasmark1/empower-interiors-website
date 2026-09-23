@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Plus01Icon, Trash01Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, TrashIcon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -87,7 +87,7 @@ export default function EditProductPage() {
   }
 
   return (
-    <div className="grid max-w-2xl gap-6">
+    <div className="grid max-w-[42rem] gap-6">
       <PageHeader
         title="Edit product"
         description="Update product details, categories, and variants."
@@ -114,7 +114,7 @@ export default function EditProductPage() {
                 <Link
                   href={`/admin/variants/new?productId=${product?.id}`}
                 >
-                  <HugeiconsIcon icon={Plus01Icon} strokeWidth={2} />
+                  <HugeiconsIcon icon={Add01Icon} strokeWidth={2} />
                 </Link>
               </Button>
             </CardHeader>
@@ -151,7 +151,7 @@ export default function EditProductPage() {
                         disabled={deletingVariantId === variant.id}
                         onClick={() => void handleDeleteVariant(variant)}
                       >
-                        <HugeiconsIcon icon={Trash01Icon} strokeWidth={2} />
+                        <HugeiconsIcon icon={TrashIcon} strokeWidth={2} />
                       </Button>
                     </li>
                   ))}

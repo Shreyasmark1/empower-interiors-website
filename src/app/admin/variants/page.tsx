@@ -153,7 +153,7 @@ export default function VariantsPage() {
     },
     {
       accessorKey: "createdAt",
-      header: "Updated",
+      header: "Created",
       cell: ({ getValue }) => formatDateTime(getValue() as string),
     },
     {
@@ -197,7 +197,7 @@ export default function VariantsPage() {
         }
       />
 
-      <div className="flex max-w-xl items-center gap-3">
+      <div className="flex max-w-[36rem] items-center gap-3">
         <label className="text-sm font-medium" htmlFor="product-filter">
           Product
         </label>

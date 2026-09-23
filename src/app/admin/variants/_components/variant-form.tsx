@@ -29,8 +29,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { ProductRow, VariantRow } from "@/lib/schemas";
-import { createOrUpdate } from "../../../_lib/crud";
-import { AdminApiError } from "../../../_lib/api";
+import { createOrUpdate } from "../../_lib/crud";
+import { AdminApiError } from "../../_lib/api";
 
 const formSchema = z.object({
   productId: z.string().refine((value) => value !== "none", "Select a product"),
@@ -49,7 +49,6 @@ type FormValues = z.infer<typeof formSchema>;
 interface VariantFormProps {
   products: ProductRow[];
   initial?: VariantRow | null;
-  defaultProductId?: string;
 }
 
 function toFormValues(variant: VariantRow): FormValues {
@@ -63,16 +62,12 @@ function toFormValues(variant: VariantRow): FormValues {
   };
 }
 
-export function VariantForm({
-  products,
-  initial,
-  defaultProductId,
-}: VariantFormProps) {
+export function VariantForm({ products, initial }: VariantFormProps) {
   const router = useRouter();
   const isEdit = Boolean(initial);
 
   const emptyValues: FormValues = {
-    productId: defaultProductId ?? "none",
+    productId: "none",
     name: "",
     price: "",
     images: "",
@@ -88,10 +83,16 @@ export function VariantForm({
   useEffect(() => {
     if (initial) {
       form.reset(toFormValues(initial));
-    } else if (defaultProductId) {
-      form.setValue("productId", defaultProductId);
+      return;
     }
-  }, [initial, defaultProductId, form]);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get("productId");
+      if (productId) {
+        form.setValue("productId", productId);
+      }
+    }
+  }, [initial, form]);
 
   async function onSubmit(values: FormValues) {
     const payload: Record<string, unknown> = {
@@ -125,7 +126,7 @@ export function VariantForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid max-w-xl gap-4"
+        className="grid max-w-[36rem] gap-4"
       >
         <FormField
           control={form.control}
