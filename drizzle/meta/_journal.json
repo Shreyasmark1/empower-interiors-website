@@ -15,6 +15,13 @@
       "when": 1790014606093,
       "tag": "0001_premium_risque",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790148608547,
+      "tag": "0002_overconfident_living_mummy",
+      "breakpoints": true
     }
   ]
 }

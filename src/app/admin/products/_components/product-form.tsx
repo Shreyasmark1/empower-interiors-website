@@ -46,13 +46,22 @@ const formSchema = z.object({
     .max(500)
     .regex(slugRegex, "Use lowercase letters, numbers, and hyphens"),
   thumbnail: z.string(),
+  brandName: z.string().max(255),
   description: z.string(),
+  shortDescription: z.string(),
   minPrice: z.string().refine(
     (value) =>
       value.trim() === "" ||
       (!Number.isNaN(Number(value)) && Number(value) > 0),
     "Enter a positive number"
   ),
+  mrpPrice: z.string().refine(
+    (value) =>
+      value.trim() === "" ||
+      (!Number.isNaN(Number(value)) && Number(value) > 0),
+    "Enter a positive number"
+  ),
+  badges: z.string(),
   specifications: z.string().refine(
     (value) => value.trim() === "" || isJson(value),
     "Invalid JSON"
@@ -67,8 +76,12 @@ const emptyValues: FormValues = {
   name: "",
   slug: "",
   thumbnail: "",
+  brandName: "",
   description: "",
+  shortDescription: "",
   minPrice: "",
+  mrpPrice: "",
+  badges: "",
   specifications: "",
   isActive: true,
   categoryIds: [],
@@ -79,8 +92,12 @@ function toFormValues(product: ProductDetailRow): FormValues {
     name: product.name,
     slug: product.slug,
     thumbnail: product.thumbnail ?? "",
+    brandName: product.brandName ?? "",
     description: product.description ?? "",
+    shortDescription: product.shortDescription ?? "",
     minPrice: product.minPrice === null ? "" : String(product.minPrice),
+    mrpPrice: product.mrpPrice === null ? "" : String(product.mrpPrice),
+    badges: product.badges.join(", "),
     specifications:
       product.specifications && Object.keys(product.specifications).length > 0
         ? JSON.stringify(product.specifications, null, 2)
@@ -133,11 +150,21 @@ export function ProductForm({ categories, initial }: ProductFormProps) {
       name: values.name,
       slug: values.slug,
       thumbnail: values.thumbnail.trim() || undefined,
+      brandName: values.brandName.trim() || null,
       description: values.description.trim() || undefined,
+      shortDescription: values.shortDescription.trim() || null,
       minPrice:
         values.minPrice.trim() === ""
           ? null
           : Number(values.minPrice),
+      mrpPrice:
+        values.mrpPrice.trim() === ""
+          ? null
+          : Number(values.mrpPrice),
+      badges: values.badges
+        .split(",")
+        .map((badge) => badge.trim())
+        .filter(Boolean),
       specifications:
         values.specifications.trim() === ""
           ? {}
@@ -230,6 +257,42 @@ export function ProductForm({ categories, initial }: ProductFormProps) {
           )}
         />
 
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="brandName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Empower Home" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="mrpPrice"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>MRP list price (₹)</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="64999"
+                    inputMode="numeric"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Shown as the struck-out list price when a discount applies.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <FormField
           control={form.control}
           name="description"
@@ -243,6 +306,44 @@ export function ProductForm({ categories, initial }: ProductFormProps) {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="shortDescription"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Short description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="One-line product summary for the detail page"
+                  rows={2}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="badges"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Badges</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Best Seller, New Arrival"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Comma-separated. Only values supported by the storefront are shown.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

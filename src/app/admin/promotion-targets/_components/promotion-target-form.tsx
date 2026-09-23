@@ -44,15 +44,18 @@ const targetTypeLabels: Record<
   product: "Product",
 };
 
+const TARGET_TYPES = ["homepage", "category", "product"] as const;
+const PLACEMENTS = ["hero", "banner", "section"] as const;
+
 const formSchema = z
   .object({
     promotionId: z
       .string()
       .refine((value) => value !== "none", "Select a promotion"),
-    targetType: z.enum(["homepage", "category", "product"]),
+    targetType: z.enum(TARGET_TYPES),
     categoryId: z.string(),
     productId: z.string(),
-    placement: z.enum(["hero", "banner", "section"]),
+    placement: z.enum(PLACEMENTS),
     sortOrder: z.coerce.number().int().min(0).default(0),
   })
   .superRefine((values, ctx) => {
@@ -92,11 +95,19 @@ const emptyValues: FormValues = {
 function toFormValues(target: PromotionTargetRow): FormValues {
   return {
     promotionId: String(target.promotionId),
-    targetType: target.targetType,
+    targetType: TARGET_TYPES.includes(
+      target.targetType as (typeof TARGET_TYPES)[number],
+    )
+      ? (target.targetType as FormValues["targetType"])
+      : "homepage",
     categoryId:
       target.categoryId === null ? "none" : String(target.categoryId),
     productId: target.productId === null ? "none" : String(target.productId),
-    placement: target.placement,
+    placement: PLACEMENTS.includes(
+      target.placement as (typeof PLACEMENTS)[number],
+    )
+      ? (target.placement as FormValues["placement"])
+      : "banner",
     sortOrder: target.sortOrder,
   };
 }

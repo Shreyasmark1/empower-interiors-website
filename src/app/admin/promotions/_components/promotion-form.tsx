@@ -33,6 +33,7 @@ const formSchema = z.object({
   mobileImage: z.string(),
   linkUrl: z.string(),
   buttonText: z.string().max(100),
+  badgeText: z.string().max(100),
   startsAt: z.string(),
   endsAt: z.string(),
   sortOrder: z.coerce.number().int().min(0).default(0),
@@ -49,6 +50,7 @@ const emptyValues: FormValues = {
   mobileImage: "",
   linkUrl: "",
   buttonText: "",
+  badgeText: "",
   startsAt: "",
   endsAt: "",
   sortOrder: 0,
@@ -73,6 +75,7 @@ function toFormValues(promotion: PromotionDetailRow): FormValues {
     mobileImage: promotion.mobileImage ?? "",
     linkUrl: promotion.linkUrl ?? "",
     buttonText: promotion.buttonText ?? "",
+    badgeText: promotion.badgeText ?? "",
     startsAt: promotion.startsAt ? toDatetimeLocal(promotion.startsAt) : "",
     endsAt: promotion.endsAt ? toDatetimeLocal(promotion.endsAt) : "",
     sortOrder: promotion.sortOrder,
@@ -108,6 +111,7 @@ export function PromotionForm({ initial }: PromotionFormProps) {
       mobileImage: values.mobileImage.trim() || null,
       linkUrl: values.linkUrl.trim() || null,
       buttonText: values.buttonText.trim() || null,
+      badgeText: values.badgeText.trim() || null,
       startsAt: values.startsAt
         ? new Date(values.startsAt).toISOString()
         : null,
@@ -245,6 +249,23 @@ export function PromotionForm({ initial }: PromotionFormProps) {
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="badgeText"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Badge text</FormLabel>
+              <FormControl>
+                <Input placeholder="New Season" {...field} />
+              </FormControl>
+              <FormDescription>
+                Optional label rendered on the hero or banner.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField

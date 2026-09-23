@@ -3,7 +3,6 @@ import {
   bigint,
   bigserial,
   boolean,
-  check,
   index,
   integer,
   jsonb,
@@ -60,6 +59,10 @@ export const products = pgTable(
     description: text("description"),
     thumbnail: text("thumbnail"),
     minPrice: numeric("min_price", { precision: 12, scale: 2, mode: "number" }),
+    brandName: varchar("brand_name", { length: 255 }),
+    mrpPrice: numeric("mrp_price", { precision: 12, scale: 2, mode: "number" }),
+    shortDescription: text("short_description"),
+    badges: text("badges").array().notNull().default(sql`'{}'::text[]`),
     specifications: jsonb("specifications")
       .$type<Record<string, unknown>>()
       .notNull()
@@ -140,6 +143,7 @@ export const promotions = pgTable(
     mobileImage: text("mobile_image"),
     linkUrl: text("link_url"),
     buttonText: varchar("button_text", { length: 100 }),
+    badgeText: varchar("badge_text", { length: 100 }),
     startsAt: timestamp("starts_at", { withTimezone: true, mode: "date" }),
     endsAt: timestamp("ends_at", { withTimezone: true, mode: "date" }),
     isActive: boolean("is_active").notNull().default(true),
@@ -189,14 +193,6 @@ export const promotionTargets = pgTable(
     index("idx_promotion_targets_promotion_id").on(table.promotionId),
     index("idx_promotion_targets_category_id").on(table.categoryId),
     index("idx_promotion_targets_product_id").on(table.productId),
-    check(
-      "promotion_targets_target_type_check",
-      sql`${table.targetType} IN ('homepage', 'category', 'product')`,
-    ),
-    check(
-      "promotion_targets_placement_check",
-      sql`${table.placement} IN ('hero', 'banner', 'section')`,
-    ),
   ],
 );
 
