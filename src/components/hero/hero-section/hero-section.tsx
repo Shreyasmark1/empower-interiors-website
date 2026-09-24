@@ -6,15 +6,15 @@ import { Container } from "@/components/ui/container";
 import { PrimaryHeroBanner } from "../primary-hero-banner";
 import { SecondaryHeroCarousel } from "../secondary-hero-carousel";
 import type { HeroData } from "@/lib/schemas/hero";
+import { apiGet } from "@/lib/api/client";
 
 function HeroSection() {
   const [heroData, setHeroData] = useState<HeroData | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/hero")
-      .then((r) => r.json())
-      .then((data: HeroData) => {
+    apiGet<HeroData>("/api/hero")
+      .then((data) => {
         if (!cancelled) setHeroData(data);
       })
       .catch(() => {});

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { CategoryTabBar } from "../category-tab-bar";
 import { SubcategoryScrollRow } from "../subcategory-scroll-row";
 import type { MainCategory } from "@/lib/schemas/navigation";
+import { apiGet } from "@/lib/api/client";
 
 function MobileCategoryNav() {
   const [categories, setCategories] = useState<MainCategory[]>([]);
@@ -12,9 +13,8 @@ function MobileCategoryNav() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/navigation")
-      .then((r) => r.json())
-      .then((data: MainCategory[]) => {
+    apiGet<MainCategory[]>("/api/navigation")
+      .then((data) => {
         if (!cancelled) {
           setCategories(data);
           if (data.length > 0) setActiveTabId(data[0].id);

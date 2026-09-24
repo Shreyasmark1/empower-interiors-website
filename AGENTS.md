@@ -34,7 +34,7 @@ Consumers import via the folder barrel: `@/components/ui/button`, `@/components/
 
 ### Data layer
 - UI components never call the backend directly. Any data fetch or action goes through a colocated `*.service.ts` in the same feature folder (promote to `src/lib/services/` once shared by multiple features).
-- Services own the transport (fetch/axios), validate inputs and outputs with zod (`.parse`), and return typed promises. Backend not decided yet → services are backed by an in-memory mock store; swapping to real API later only touches the service, never the UI.
+- Site services perform HTTP via the shared transport `@/lib/api/client` (`apiGet`/`apiPost`, throws `ApiClientError`), then validate inputs/outputs with zod (`.parse`) and return typed promises. Single-file services stay flat (`*.service.ts`); a feature with mock/mapper/constants files uses a nested `services/` subfolder (see `product-listing`, `product-detail`). Backend not decided yet → services are backed by an in-memory mock store; swapping to real API later only touches the service, never the UI.
 - Types come exclusively from zod, in one place: `src/lib/schemas/` (`index.ts` re-exports). Component/service code uses `z.infer<>` types — no hand-authored interfaces for domain objects.
 - Derivation rule: `XBaseSchema` = creation payload (no `id`); `XSchema = XBaseSchema.extend({ id })` = entity + update payload; export `CreateX`, `X`, `UpdateX` inferred types.
 
