@@ -29,6 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { Category } from "@/lib/schemas";
+import { ImageUpload } from "../../_components/image-upload";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
@@ -239,16 +240,15 @@ export function CategoryForm({ categories, initial }: CategoryFormProps) {
           name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Image</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="https://…"
-                  {...field}
+                <ImageUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  folder="category"
+                  disabled={form.formState.isSubmitting}
                 />
               </FormControl>
-              <FormDescription>
-                Image upload is not available yet; paste a URL for now.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

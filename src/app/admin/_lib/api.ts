@@ -27,7 +27,8 @@ async function adminFetch<T>(
     options;
 
   const headers: Record<string, string> = { ...extraHeaders };
-  if (body !== undefined) {
+  const isFormData = body instanceof FormData;
+  if (body !== undefined && !isFormData) {
     headers["Content-Type"] = "application/json";
   }
   if (auth) {
@@ -43,7 +44,12 @@ async function adminFetch<T>(
     response = await fetch(`/api${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body:
+        body === undefined
+          ? undefined
+          : isFormData
+            ? body
+            : JSON.stringify(body),
     });
   } catch {
     throw new AdminApiError(0, "Network error");

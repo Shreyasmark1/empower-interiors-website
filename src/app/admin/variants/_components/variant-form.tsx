@@ -10,7 +10,6 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -29,6 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { ProductRow, VariantRow } from "@/lib/schemas";
+import { ImageUploadMulti } from "../../_components/image-upload-multi";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
@@ -39,7 +39,7 @@ const formSchema = z.object({
     (value) => !Number.isNaN(Number(value)) && Number(value) > 0,
     "Enter a positive price"
   ),
-  images: z.string(),
+  images: z.array(z.string()),
   sortOrder: z.coerce.number().int().min(0).default(0),
   isActive: z.boolean(),
 });
@@ -56,7 +56,7 @@ function toFormValues(variant: VariantRow): FormValues {
     productId: String(variant.productId),
     name: variant.name,
     price: String(variant.price),
-    images: variant.images.join("\n"),
+    images: variant.images,
     sortOrder: variant.sortOrder,
     isActive: variant.isActive,
   };
@@ -70,7 +70,7 @@ export function VariantForm({ products, initial }: VariantFormProps) {
     productId: "none",
     name: "",
     price: "",
-    images: "",
+    images: [],
     sortOrder: 0,
     isActive: true,
   };
@@ -99,10 +99,7 @@ export function VariantForm({ products, initial }: VariantFormProps) {
       productId: Number(values.productId),
       name: values.name,
       price: Number(values.price),
-      images: values.images
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean),
+      images: values.images,
       sortOrder: values.sortOrder,
       isActive: values.isActive,
     };
@@ -211,18 +208,16 @@ export function VariantForm({ products, initial }: VariantFormProps) {
           name="images"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URLs</FormLabel>
+              <FormLabel>Images</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder={"https://example.com/charcoal-large-front.jpg\nhttps://example.com/charcoal-large-back.jpg"}
-                  rows={3}
-                  spellCheck={false}
-                  className="font-mono text-xs"
-                  {...field}
+                <ImageUploadMulti
+                  values={field.value}
+                  onChange={field.onChange}
+                  folder="variant"
                 />
               </FormControl>
               <FormDescription>
-                One URL per line. Leave empty if no images are available.
+                One or many images shown on the product detail gallery.
               </FormDescription>
               <FormMessage />
             </FormItem>

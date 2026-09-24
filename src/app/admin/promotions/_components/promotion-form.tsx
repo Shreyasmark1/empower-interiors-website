@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { PromotionDetailRow } from "@/lib/schemas";
+import { ImageUpload } from "../../_components/image-upload";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
@@ -190,35 +191,42 @@ export function PromotionForm({ initial }: PromotionFormProps) {
         />
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Image URL</FormLabel>
-                <FormControl>
-                  <Input placeholder="https://…" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Image upload is not available yet; paste a URL for now.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mobileImage"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile image URL</FormLabel>
-                <FormControl>
-                  <Input placeholder="https://…" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+<FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image</FormLabel>
+              <FormControl>
+                <ImageUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  folder="promotion"
+                  disabled={form.formState.isSubmitting}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="mobileImage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Mobile image</FormLabel>
+              <FormControl>
+                <ImageUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  folder="promotion"
+                  disabled={form.formState.isSubmitting}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">

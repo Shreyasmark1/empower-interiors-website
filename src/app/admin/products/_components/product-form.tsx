@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { Category, ProductDetailRow, ProductRow } from "@/lib/schemas";
+import { ImageUpload } from "../../_components/image-upload";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
@@ -242,16 +243,15 @@ export function ProductForm({ categories, initial }: ProductFormProps) {
           name="thumbnail"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Thumbnail URL</FormLabel>
+              <FormLabel>Thumbnail</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="https://…"
-                  {...field}
+                <ImageUpload
+                  value={field.value}
+                  onChange={field.onChange}
+                  folder="product"
+                  disabled={form.formState.isSubmitting}
                 />
               </FormControl>
-              <FormDescription>
-                Image upload is not available yet; paste a URL for now.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
