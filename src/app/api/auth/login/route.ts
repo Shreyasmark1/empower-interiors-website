@@ -32,8 +32,12 @@ async function _postLogin(request: NextRequest) {
     .where(eq(users.email, parsed.data.email))
     .limit(1);
 
-  const validCredentials =
-    user && (await verifyPassword(parsed.data.password, user.passwordHash));
+  console.log(JSON.stringify(user ? user : "no user"))
+
+  const validCredentials = user && (await verifyPassword(parsed.data.password, user.passwordHash));
+
+  console.log("is valid: " + validCredentials)
+
   if (!user || !user.isActive || !validCredentials) {
     throw new ApiError(401, "Invalid email or password");
   }
