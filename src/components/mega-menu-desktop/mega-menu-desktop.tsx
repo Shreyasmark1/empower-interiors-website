@@ -7,6 +7,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/ui/container";
 import type { MainCategory, PromoBanner } from "@/lib/schemas/navigation";
+import { apiGet } from "@/lib/api/client";
 
 const HOVER_OPEN_DELAY = 80;
 const HOVER_CLOSE_DELAY = 180;
@@ -52,9 +53,8 @@ function MegaMenuDesktop({ className }: { className?: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/navigation")
-      .then((r) => r.json())
-      .then((data: MainCategory[]) => {
+    apiGet<MainCategory[]>("/api/navigation")
+      .then((data) => {
         if (!cancelled) setCategories(data);
       })
       .catch(() => {});
