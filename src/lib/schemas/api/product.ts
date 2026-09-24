@@ -12,6 +12,7 @@ export const ProductCreateSchema = z.object({
   badges: z.array(z.string()).default([]),
   specifications: z.record(z.string(), z.unknown()).default({}),
   isActive: z.boolean().default(true),
+  categoryIds: z.array(z.coerce.number().int().positive()).max(500).default([]),
 });
 
 export type CreateProduct = z.infer<typeof ProductCreateSchema>;
@@ -30,6 +31,7 @@ export const ProductUpdateSchema = z.object({
   specifications: z.record(z.string(), z.unknown()).optional(),
   isActive: z.boolean().optional(),
   isDeleted: z.boolean().optional(),
+  categoryIds: z.array(z.coerce.number().int().positive()).max(500).optional(),
 });
 
 export type UpdateProduct = z.infer<typeof ProductUpdateSchema>;

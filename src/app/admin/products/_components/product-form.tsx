@@ -3,9 +3,8 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -22,73 +21,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type { Category, ProductDetailRow, ProductRow } from "@/lib/schemas";
+import type { Category, ProductDetailRow } from "@/lib/schemas";
+import {
+  ProductFormSchema,
+  type ProductFormInput,
+  type ProductFormOutput,
+} from "@/lib/schemas/form/product";
 import { ImageUpload } from "../../_components/image-upload";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
-const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
-function isJson(value: string): boolean {
-  try {
-    JSON.parse(value);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-const formSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(500),
-  slug: z
-    .string()
-    .trim()
-    .min(1, "Slug is required")
-    .max(500)
-    .regex(slugRegex, "Use lowercase letters, numbers, and hyphens"),
-  thumbnail: z.string(),
-  brandName: z.string().max(255),
-  description: z.string(),
-  shortDescription: z.string(),
-  minPrice: z.string().refine(
-    (value) =>
-      value.trim() === "" ||
-      (!Number.isNaN(Number(value)) && Number(value) > 0),
-    "Enter a positive number"
-  ),
-  mrpPrice: z.string().refine(
-    (value) =>
-      value.trim() === "" ||
-      (!Number.isNaN(Number(value)) && Number(value) > 0),
-    "Enter a positive number"
-  ),
-  badges: z.string(),
-  specifications: z.string().refine(
-    (value) => value.trim() === "" || isJson(value),
-    "Invalid JSON"
-  ),
-  isActive: z.boolean(),
-  categoryIds: z.array(z.string()),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-const emptyValues: FormValues = {
-  name: "",
-  slug: "",
-  thumbnail: "",
-  brandName: "",
-  description: "",
-  shortDescription: "",
-  minPrice: "",
-  mrpPrice: "",
-  badges: "",
-  specifications: "",
-  isActive: true,
-  categoryIds: [],
-};
-
-function toFormValues(product: ProductDetailRow): FormValues {
+function toFormValues(product: ProductDetailRow): ProductFormInput {
   return {
     name: product.name,
     slug: product.slug,
@@ -129,8 +72,23 @@ export function ProductForm({ categories, initial }: ProductFormProps) {
   const router = useRouter();
   const isEdit = Boolean(initial);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema) as Resolver<FormValues>,
+  const emptyValues: ProductFormInput = {
+    name: "",
+    slug: "",
+    thumbnail: "",
+    brandName: "",
+    description: "",
+    shortDescription: "",
+    minPrice: "",
+    mrpPrice: "",
+    badges: "",
+    specifications: "",
+    isActive: true,
+    categoryIds: [],
+  };
+
+  const form = useForm<ProductFormInput, unknown, ProductFormOutput>({
+    resolver: zodResolver(ProductFormSchema),
     defaultValues: emptyValues,
   });
 
@@ -146,42 +104,11 @@ export function ProductForm({ categories, initial }: ProductFormProps) {
     form.setValue("slug", slugify(name), { shouldValidate: true });
   }
 
-  async function onSubmit(values: FormValues) {
-    const payload: Record<string, unknown> = {
-      name: values.name,
-      slug: values.slug,
-      thumbnail: values.thumbnail.trim() || undefined,
-      brandName: values.brandName.trim() || null,
-      description: values.description.trim() || undefined,
-      shortDescription: values.shortDescription.trim() || null,
-      minPrice:
-        values.minPrice.trim() === ""
-          ? null
-          : Number(values.minPrice),
-      mrpPrice:
-        values.mrpPrice.trim() === ""
-          ? null
-          : Number(values.mrpPrice),
-      badges: values.badges
-        .split(",")
-        .map((badge) => badge.trim())
-        .filter(Boolean),
-      specifications:
-        values.specifications.trim() === ""
-          ? {}
-          : (JSON.parse(values.specifications) as Record<string, unknown>),
-      isActive: values.isActive,
-    };
-    if (isEdit && initial) {
-      payload.id = initial.id;
-    }
+  async function onSubmit(values: ProductFormOutput) {
+    const payload = isEdit && initial ? { ...values, id: initial.id } : values;
 
     try {
-      const product = await createOrUpdate<ProductRow>("/products", payload);
-      await createOrUpdate("/product-categories", {
-        productId: product.id,
-        categoryIds: values.categoryIds.map(Number),
-      });
+      await createOrUpdate("/products", payload);
       toast.success(isEdit ? "Product updated" : "Product created");
       router.push("/admin/products");
       router.refresh();

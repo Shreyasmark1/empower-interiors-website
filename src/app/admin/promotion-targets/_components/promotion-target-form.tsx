@@ -3,9 +3,8 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, useWatch, type Resolver } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,12 @@ import type {
   PromotionRow,
   PromotionTargetRow,
 } from "@/lib/schemas";
+import {
+  PromotionTargetFormSchema,
+  type PromotionTargetFormInput,
+  type PromotionTargetFormOutput,
+} from "@/lib/schemas/form/promotion-target";
+import { TARGET_TYPES, PLACEMENTS } from "@/lib/schemas/api/promotion-target";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
@@ -44,61 +49,22 @@ const targetTypeLabels: Record<
   product: "Product",
 };
 
-const TARGET_TYPES = ["homepage", "category", "product"] as const;
-const PLACEMENTS = ["hero", "banner", "section"] as const;
-
-const formSchema = z
-  .object({
-    promotionId: z
-      .string()
-      .refine((value) => value !== "none", "Select a promotion"),
-    targetType: z.enum(TARGET_TYPES),
-    categoryId: z.string(),
-    productId: z.string(),
-    placement: z.enum(PLACEMENTS),
-    sortOrder: z.coerce.number().int().min(0).default(0),
-  })
-  .superRefine((values, ctx) => {
-    if (
-      values.targetType === "category" &&
-      values.categoryId === "none"
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["categoryId"],
-        message: "Select a category",
-      });
-    }
-    if (
-      values.targetType === "product" &&
-      values.productId === "none"
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["productId"],
-        message: "Select a product",
-      });
-    }
-  });
-
-type FormValues = z.infer<typeof formSchema>;
-
-const emptyValues: FormValues = {
+const emptyValues: PromotionTargetFormInput = {
   promotionId: "none",
   targetType: "homepage",
   categoryId: "none",
   productId: "none",
   placement: "banner",
-  sortOrder: 0,
+  sortOrder: "0",
 };
 
-function toFormValues(target: PromotionTargetRow): FormValues {
+function toFormValues(target: PromotionTargetRow): PromotionTargetFormInput {
   return {
     promotionId: String(target.promotionId),
     targetType: TARGET_TYPES.includes(
       target.targetType as (typeof TARGET_TYPES)[number],
     )
-      ? (target.targetType as FormValues["targetType"])
+      ? (target.targetType as PromotionTargetFormInput["targetType"])
       : "homepage",
     categoryId:
       target.categoryId === null ? "none" : String(target.categoryId),
@@ -106,9 +72,9 @@ function toFormValues(target: PromotionTargetRow): FormValues {
     placement: PLACEMENTS.includes(
       target.placement as (typeof PLACEMENTS)[number],
     )
-      ? (target.placement as FormValues["placement"])
+      ? (target.placement as PromotionTargetFormInput["placement"])
       : "banner",
-    sortOrder: target.sortOrder,
+    sortOrder: String(target.sortOrder),
   };
 }
 
@@ -128,8 +94,12 @@ export function PromotionTargetForm({
   const router = useRouter();
   const isEdit = Boolean(initial);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema) as Resolver<FormValues>,
+  const form = useForm<
+    PromotionTargetFormInput,
+    unknown,
+    PromotionTargetFormOutput
+  >({
+    resolver: zodResolver(PromotionTargetFormSchema),
     defaultValues: emptyValues,
   });
 
@@ -149,24 +119,8 @@ export function PromotionTargetForm({
     }
   }, [initial, form]);
 
-  async function onSubmit(values: FormValues) {
-    const payload: Record<string, unknown> = {
-      promotionId: Number(values.promotionId),
-      targetType: values.targetType,
-      categoryId:
-        values.targetType === "category" && values.categoryId !== "none"
-          ? Number(values.categoryId)
-          : null,
-      productId:
-        values.targetType === "product" && values.productId !== "none"
-          ? Number(values.productId)
-          : null,
-      placement: values.placement,
-      sortOrder: values.sortOrder,
-    };
-    if (isEdit && initial) {
-      payload.id = initial.id;
-    }
+  async function onSubmit(values: PromotionTargetFormOutput) {
+    const payload = isEdit && initial ? { ...values, id: initial.id } : values;
 
     try {
       await createOrUpdate("/promotion-targets", payload);

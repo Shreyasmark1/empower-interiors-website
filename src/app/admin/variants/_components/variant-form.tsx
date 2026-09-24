@@ -3,9 +3,8 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -28,36 +27,27 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { ProductRow, VariantRow } from "@/lib/schemas";
+import {
+  VariantFormSchema,
+  type VariantFormInput,
+  type VariantFormOutput,
+} from "@/lib/schemas/form/variant";
 import { ImageUploadMulti } from "../../_components/image-upload-multi";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
-
-const formSchema = z.object({
-  productId: z.string().refine((value) => value !== "none", "Select a product"),
-  name: z.string().trim().min(1, "Name is required").max(255),
-  price: z.string().refine(
-    (value) => !Number.isNaN(Number(value)) && Number(value) > 0,
-    "Enter a positive price"
-  ),
-  images: z.array(z.string()),
-  sortOrder: z.coerce.number().int().min(0).default(0),
-  isActive: z.boolean(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 interface VariantFormProps {
   products: ProductRow[];
   initial?: VariantRow | null;
 }
 
-function toFormValues(variant: VariantRow): FormValues {
+function toFormValues(variant: VariantRow): VariantFormInput {
   return {
     productId: String(variant.productId),
     name: variant.name,
     price: String(variant.price),
     images: variant.images,
-    sortOrder: variant.sortOrder,
+    sortOrder: String(variant.sortOrder),
     isActive: variant.isActive,
   };
 }
@@ -66,17 +56,17 @@ export function VariantForm({ products, initial }: VariantFormProps) {
   const router = useRouter();
   const isEdit = Boolean(initial);
 
-  const emptyValues: FormValues = {
+  const emptyValues: VariantFormInput = {
     productId: "none",
     name: "",
     price: "",
     images: [],
-    sortOrder: 0,
+    sortOrder: "0",
     isActive: true,
   };
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema) as Resolver<FormValues>,
+  const form = useForm<VariantFormInput, unknown, VariantFormOutput>({
+    resolver: zodResolver(VariantFormSchema),
     defaultValues: emptyValues,
   });
 
@@ -94,18 +84,8 @@ export function VariantForm({ products, initial }: VariantFormProps) {
     }
   }, [initial, form]);
 
-  async function onSubmit(values: FormValues) {
-    const payload: Record<string, unknown> = {
-      productId: Number(values.productId),
-      name: values.name,
-      price: Number(values.price),
-      images: values.images,
-      sortOrder: values.sortOrder,
-      isActive: values.isActive,
-    };
-    if (isEdit && initial) {
-      payload.id = initial.id;
-    }
+  async function onSubmit(values: VariantFormOutput) {
+    const payload = isEdit && initial ? { ...values, id: initial.id } : values;
 
     try {
       await createOrUpdate("/variants", payload);

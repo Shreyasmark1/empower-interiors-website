@@ -3,9 +3,8 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -29,48 +28,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { Category } from "@/lib/schemas";
+import {
+  CategoryFormSchema,
+  type CategoryFormInput,
+  type CategoryFormOutput,
+} from "@/lib/schemas/form/category";
 import { ImageUpload } from "../../_components/image-upload";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
-const formSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(255),
-  slug: z
-    .string()
-    .trim()
-    .min(1, "Slug is required")
-    .max(255)
-    .regex(
-      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-      "Use lowercase letters, numbers, and hyphens"
-    ),
-  parentId: z.string(),
-  description: z.string(),
-  image: z.string(),
-  sortOrder: z.coerce.number().int().min(0).default(0),
-  isActive: z.boolean(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-const emptyValues: FormValues = {
+const emptyValues: CategoryFormInput = {
   name: "",
   slug: "",
   parentId: "none",
   description: "",
   image: "",
-  sortOrder: 0,
+  sortOrder: "0",
   isActive: true,
 };
 
-function toFormValues(category: Category): FormValues {
+function toFormValues(category: Category): CategoryFormInput {
   return {
     name: category.name,
     slug: category.slug,
     parentId: category.parentId === null ? "none" : String(category.parentId),
     description: category.description ?? "",
     image: category.image ?? "",
-    sortOrder: category.sortOrder,
+    sortOrder: String(category.sortOrder),
     isActive: category.isActive,
   };
 }
@@ -94,8 +78,8 @@ export function CategoryForm({ categories, initial }: CategoryFormProps) {
   const router = useRouter();
   const isEdit = Boolean(initial);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema) as Resolver<FormValues>,
+  const form = useForm<CategoryFormInput, unknown, CategoryFormOutput>({
+    resolver: zodResolver(CategoryFormSchema),
     defaultValues: emptyValues,
   });
 
@@ -115,20 +99,8 @@ export function CategoryForm({ categories, initial }: CategoryFormProps) {
     form.setValue("slug", slugify(name), { shouldValidate: true });
   }
 
-  async function onSubmit(values: FormValues) {
-    const payload: Record<string, unknown> = {
-      name: values.name,
-      slug: values.slug,
-      parentId:
-        values.parentId === "none" ? undefined : Number(values.parentId),
-      description: values.description.trim() || null,
-      image: values.image.trim() || null,
-      sortOrder: values.sortOrder,
-      isActive: values.isActive,
-    };
-    if (isEdit && initial) {
-      payload.id = initial.id;
-    }
+  async function onSubmit(values: CategoryFormOutput) {
+    const payload = isEdit && initial ? { ...values, id: initial.id } : values;
 
     try {
       await createOrUpdate("/categories", payload);

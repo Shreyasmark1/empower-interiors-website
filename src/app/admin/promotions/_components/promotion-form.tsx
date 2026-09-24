@@ -3,9 +3,8 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -22,28 +21,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { PromotionDetailRow } from "@/lib/schemas";
+import {
+  PromotionFormSchema,
+  type PromotionFormInput,
+  type PromotionFormOutput,
+} from "@/lib/schemas/form/promotion";
 import { ImageUpload } from "../../_components/image-upload";
 import { createOrUpdate } from "../../_lib/crud";
 import { AdminApiError } from "../../_lib/api";
 
-const formSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(255),
-  title: z.string().max(500),
-  description: z.string(),
-  image: z.string(),
-  mobileImage: z.string(),
-  linkUrl: z.string(),
-  buttonText: z.string().max(100),
-  badgeText: z.string().max(100),
-  startsAt: z.string(),
-  endsAt: z.string(),
-  sortOrder: z.coerce.number().int().min(0).default(0),
-  isActive: z.boolean(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-const emptyValues: FormValues = {
+const emptyValues: PromotionFormInput = {
   name: "",
   title: "",
   description: "",
@@ -54,7 +41,7 @@ const emptyValues: FormValues = {
   badgeText: "",
   startsAt: "",
   endsAt: "",
-  sortOrder: 0,
+  sortOrder: "0",
   isActive: true,
 };
 
@@ -67,7 +54,7 @@ function toDatetimeLocal(iso: string): string {
   );
 }
 
-function toFormValues(promotion: PromotionDetailRow): FormValues {
+function toFormValues(promotion: PromotionDetailRow): PromotionFormInput {
   return {
     name: promotion.name,
     title: promotion.title ?? "",
@@ -79,7 +66,7 @@ function toFormValues(promotion: PromotionDetailRow): FormValues {
     badgeText: promotion.badgeText ?? "",
     startsAt: promotion.startsAt ? toDatetimeLocal(promotion.startsAt) : "",
     endsAt: promotion.endsAt ? toDatetimeLocal(promotion.endsAt) : "",
-    sortOrder: promotion.sortOrder,
+    sortOrder: String(promotion.sortOrder),
     isActive: promotion.isActive,
   };
 }
@@ -92,8 +79,8 @@ export function PromotionForm({ initial }: PromotionFormProps) {
   const router = useRouter();
   const isEdit = Boolean(initial);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema) as Resolver<FormValues>,
+  const form = useForm<PromotionFormInput, unknown, PromotionFormOutput>({
+    resolver: zodResolver(PromotionFormSchema),
     defaultValues: emptyValues,
   });
 
@@ -103,26 +90,8 @@ export function PromotionForm({ initial }: PromotionFormProps) {
     }
   }, [initial, form]);
 
-  async function onSubmit(values: FormValues) {
-    const payload: Record<string, unknown> = {
-      name: values.name,
-      title: values.title.trim() || null,
-      description: values.description.trim() || null,
-      image: values.image.trim() || null,
-      mobileImage: values.mobileImage.trim() || null,
-      linkUrl: values.linkUrl.trim() || null,
-      buttonText: values.buttonText.trim() || null,
-      badgeText: values.badgeText.trim() || null,
-      startsAt: values.startsAt
-        ? new Date(values.startsAt).toISOString()
-        : null,
-      endsAt: values.endsAt ? new Date(values.endsAt).toISOString() : null,
-      sortOrder: values.sortOrder,
-      isActive: values.isActive,
-    };
-    if (isEdit && initial) {
-      payload.id = initial.id;
-    }
+  async function onSubmit(values: PromotionFormOutput) {
+    const payload = isEdit && initial ? { ...values, id: initial.id } : values;
 
     try {
       await createOrUpdate("/promotions", payload);
