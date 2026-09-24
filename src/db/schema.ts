@@ -200,7 +200,7 @@ export const users = pgTable(
   "users",
   {
     id: bigserial("id", { mode: "number" }).primaryKey(),
-    username: varchar("username", { length: 255 }).notNull().unique(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
     passwordHash: text("password_hash").notNull(),
     role: varchar("role", { length: 30 }).notNull().default("admin"),
     isActive: boolean("is_active").notNull().default(true),

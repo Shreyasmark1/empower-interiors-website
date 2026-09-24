@@ -78,7 +78,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <Separator className="mb-4" />
           <div className="flex items-center justify-between gap-2">
             <p className="truncate text-sm text-muted-foreground">
-              {user?.username ?? "Admin"}
+              {user?.email ?? "Admin"}
             </p>
             <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out">
               <HugeiconsIcon icon={Logout01Icon} strokeWidth={2} className="size-4" />

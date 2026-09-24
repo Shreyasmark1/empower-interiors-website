@@ -5,7 +5,7 @@ const USER_KEY = "empower_admin_user";
 
 export interface AdminUser {
   id: number;
-  username: string;
+  email: string;
   role: string;
 }
 

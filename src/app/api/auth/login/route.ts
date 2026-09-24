@@ -29,13 +29,13 @@ async function _postLogin(request: NextRequest) {
   const [user] = await db
     .select()
     .from(users)
-    .where(eq(users.username, parsed.data.username))
+    .where(eq(users.email, parsed.data.email))
     .limit(1);
 
   const validCredentials =
     user && (await verifyPassword(parsed.data.password, user.passwordHash));
   if (!user || !user.isActive || !validCredentials) {
-    throw new ApiError(401, "Invalid username or password");
+    throw new ApiError(401, "Invalid email or password");
   }
 
   const token = signJwt({ sub: String(user.id), role: user.role });
@@ -44,7 +44,7 @@ async function _postLogin(request: NextRequest) {
     token,
     user: {
       id: user.id,
-      username: user.username,
+      email: user.email,
       role: user.role,
     },
   });

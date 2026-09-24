@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(LoginSchema),
-    defaultValues: { username: "", password: "" },
+    defaultValues: { email: "", password: "" },
   });
 
   if (isLoggedIn()) {
@@ -86,14 +86,14 @@ export default function LoginPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem className="grid gap-2">
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="username"
-                        autoComplete="username"
+                        placeholder="you@example.com"
+                        autoComplete="email"
                         {...field}
                       />
                     </FormControl>
