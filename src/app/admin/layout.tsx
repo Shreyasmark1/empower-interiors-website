@@ -1,46 +1,24 @@
-"use client"
+import React from "react";
 
-import React, { useSyncExternalStore } from "react";
-import { usePathname, redirect } from "next/navigation";
-
-import { isLoggedIn } from "./_lib/auth";
+import { getSessionUser } from "@/lib/auth/session";
 import { AdminShell } from "./_components/admin-shell";
 
-function useIsHydrated() {
-  return useSyncExternalStore(
-    () => () => undefined,
-    () => true,
-    () => false
-  );
-}
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isHydrated = useIsHydrated();
+  const user = await getSessionUser();
 
-  if (!isHydrated) {
-    return (
-      <div className="flex min-h-svh items-center justify-center bg-muted/30">
-        <div
-          role="status"
-          aria-label="Loading"
-          className="size-8 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-primary"
-        />
-      </div>
-    );
-  }
-
-  if (pathname !== "/admin/login" && !isLoggedIn()) {
-    redirect("/admin/login");
-  }
-
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
-  }
-
-  return <AdminShell>{children}</AdminShell>;
+  return (
+    <AdminShell
+      user={
+        user
+          ? { id: Number(user.id), role: user.role, email: user.email }
+          : null
+      }
+    >
+      {children}
+    </AdminShell>
+  );
 }

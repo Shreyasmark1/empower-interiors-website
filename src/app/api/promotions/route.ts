@@ -1,13 +1,7 @@
-import { asc, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
-import { db } from "@/db";
-import { promotions } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
-import {
-  pickDefined,
-  readJsonBody,
-} from "@/lib/api/request";
+import { pickDefined, readJsonBody } from "@/lib/api/request";
 import { requireAuth } from "@/lib/auth";
 import {
   firstIssueMessage,
@@ -17,16 +11,17 @@ import {
   PromotionCreateSchema,
   PromotionUpdateSchema,
 } from "@/lib/schemas/api/promotion";
+import * as queries from "@/lib/queries/promotions";
 
 export async function GET(request: NextRequest) {
-  return handleErrors(() => _getPromotions(request));
+  return handleErrors(() => _promotions(request));
 }
 
 export async function POST(request: NextRequest) {
   return handleErrors(() => _postPromotions(request));
 }
 
-async function _getPromotions(request: NextRequest) {
+async function _promotions(request: NextRequest) {
   const parsed = listQuerySchema.safeParse(
     Object.fromEntries(request.nextUrl.searchParams),
   );
@@ -34,15 +29,7 @@ async function _getPromotions(request: NextRequest) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
   const { limit, offset, includeDeleted } = parsed.data;
-
-  const items = await db
-    .select()
-    .from(promotions)
-    .where(includeDeleted ? undefined : eq(promotions.isDeleted, false))
-    .orderBy(asc(promotions.sortOrder), asc(promotions.id))
-    .limit(limit)
-    .offset(offset);
-
+  const items = await queries.listPromotions({ limit, offset, includeDeleted });
   return ok({ items });
 }
 
@@ -58,14 +45,7 @@ async function _postPromotions(request: NextRequest) {
       throw new ApiError(400, firstIssueMessage(parsed.error));
     }
     const { id, ...values } = parsed.data;
-    const [row] = await db
-      .update(promotions)
-      .set({ ...pickDefined(values), updatedAt: new Date() })
-      .where(eq(promotions.id, id))
-      .returning();
-    if (!row) {
-      throw new ApiError(404, "Promotion not found");
-    }
+    const row = await queries.updatePromotion(id, pickDefined(values));
     return ok(row);
   }
 
@@ -73,6 +53,6 @@ async function _postPromotions(request: NextRequest) {
   if (!parsed.success) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
-  const [row] = await db.insert(promotions).values(parsed.data).returning();
+  const row = await queries.createPromotion(parsed.data);
   return ok(row, 201);
 }

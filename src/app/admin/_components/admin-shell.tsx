@@ -16,7 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { clearSession, getSessionUser } from "../_lib/auth";
+
+interface AdminShellUser {
+  id: number;
+  role: string;
+  email?: string;
+}
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: DashboardSquare02Icon, exact: true },
@@ -27,14 +32,27 @@ const navItems = [
   { href: "/admin/promotion-targets", label: "Promotion Targets", icon: MarketingIcon, exact: false },
 ] as const;
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: AdminShellUser | null;
+}) {
   const pathname = usePathname();
   const router = useRouter();
-  const user = getSessionUser();
 
-  function handleSignOut() {
-    clearSession();
+  async function handleSignOut() {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "same-origin",
+    });
     router.replace("/admin/login");
+    router.refresh();
+  }
+
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
   }
 
   return (

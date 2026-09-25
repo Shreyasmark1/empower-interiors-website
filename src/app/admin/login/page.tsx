@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -26,12 +26,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { AdminApiError, adminPost } from "../_lib/api";
-import { isLoggedIn, setSession, type AdminUser } from "../_lib/auth";
-
-interface LoginResponse {
-  token: string;
-  user: AdminUser;
-}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,20 +36,12 @@ export default function LoginPage() {
     defaultValues: { email: "", password: "" },
   });
 
-  if (isLoggedIn()) {
-    redirect("/admin");
-  }
-
   async function onSubmit(values: LoginInput) {
     setError(null);
     try {
-      const data = await adminPost<LoginResponse>(
-        "/auth/login",
-        values,
-        { auth: false }
-      );
-      setSession(data.token, data.user);
+      await adminPost("/auth/login", values, { auth: false });
       router.replace("/admin");
+      router.refresh();
     } catch (err) {
       setError(
         err instanceof AdminApiError ? err.message : "Login failed"

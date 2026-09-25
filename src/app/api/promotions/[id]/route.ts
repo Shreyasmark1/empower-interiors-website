@@ -1,13 +1,11 @@
-import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
-import { db } from "@/db";
-import { promotionTargets, promotions } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
 import {
   entityIdSchema,
   firstIssueMessage,
 } from "@/lib/schemas/api/common";
+import * as queries from "@/lib/queries/promotions";
 
 export async function GET(
   _request: NextRequest,
@@ -23,13 +21,5 @@ async function _getPromotionById(params: Promise<{ id: string }>) {
     throw new ApiError(400, firstIssueMessage(id.error));
   }
 
-  const row = await db.query.promotions.findFirst({
-    where: and(eq(promotions.id, id.data), eq(promotions.isDeleted, false)),
-    with: { targets: { where: eq(promotionTargets.isDeleted, false) } },
-  });
-  if (!row) {
-    throw new ApiError(404, "Promotion not found");
-  }
-
-  return ok(row);
+  return ok(await queries.getPromotionById(id.data));
 }

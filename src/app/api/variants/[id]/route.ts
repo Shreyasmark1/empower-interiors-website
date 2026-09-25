@@ -1,13 +1,11 @@
-import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
-import { db } from "@/db";
-import { variants } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
 import {
   entityIdSchema,
   firstIssueMessage,
 } from "@/lib/schemas/api/common";
+import * as queries from "@/lib/queries/variants";
 
 export async function GET(
   _request: NextRequest,
@@ -23,14 +21,5 @@ async function _getVariantById(params: Promise<{ id: string }>) {
     throw new ApiError(400, firstIssueMessage(id.error));
   }
 
-  const [row] = await db
-    .select()
-    .from(variants)
-    .where(and(eq(variants.id, id.data), eq(variants.isDeleted, false)))
-    .limit(1);
-  if (!row) {
-    throw new ApiError(404, "Variant not found");
-  }
-
-  return ok(row);
+  return ok(await queries.getVariantById(id.data));
 }

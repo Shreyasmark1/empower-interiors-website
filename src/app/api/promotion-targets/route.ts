@@ -1,16 +1,9 @@
-import { and, asc, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
-import { db } from "@/db";
-import { promotionTargets } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
-import {
-  pickDefined,
-  readJsonBody,
-} from "@/lib/api/request";
+import { pickDefined, readJsonBody } from "@/lib/api/request";
 import { requireAuth } from "@/lib/auth";
 import {
-  entityIdSchema,
   firstIssueMessage,
   listQuerySchema,
 } from "@/lib/schemas/api/common";
@@ -18,45 +11,37 @@ import {
   PromotionTargetCreateSchema,
   PromotionTargetUpdateSchema,
 } from "@/lib/schemas/api/promotion-target";
+import * as queries from "@/lib/queries/promotion-targets";
 
 export async function GET(request: NextRequest) {
-  return handleErrors(() => _getPromotionTargets(request));
+  return handleErrors(() => _promotionTargets(request));
 }
 
 export async function POST(request: NextRequest) {
   return handleErrors(() => _postPromotionTargets(request));
 }
 
-async function _getPromotionTargets(request: NextRequest) {
+async function _promotionTargets(request: NextRequest) {
   const query = Object.fromEntries(request.nextUrl.searchParams);
 
-  const listQuery = listQuerySchema.safeParse(query);
-  if (!listQuery.success) {
-    throw new ApiError(400, firstIssueMessage(listQuery.error));
-  }
-  const { limit, offset, includeDeleted } = listQuery.data;
-
-  const conditions = [];
-  for (const key of ["promotionId", "categoryId", "productId"] as const) {
-    if (query[key] === undefined) continue;
-    const parsed = entityIdSchema.safeParse(query[key]);
-    if (!parsed.success) {
-      throw new ApiError(400, firstIssueMessage(parsed.error));
+  const filters: { promotionId?: number } = {};
+  for (const key of ["promotionId"] as const) {
+    if (query[key] !== undefined) {
+      filters[key] = Number(query[key]);
     }
-    conditions.push(eq(promotionTargets[key], parsed.data));
-  }
-  if (!includeDeleted) {
-    conditions.push(eq(promotionTargets.isDeleted, false));
   }
 
-  const items = await db
-    .select()
-    .from(promotionTargets)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(asc(promotionTargets.sortOrder), asc(promotionTargets.id))
-    .limit(limit)
-    .offset(offset);
-
+  const parsed = listQuerySchema.safeParse(query);
+  if (!parsed.success) {
+    throw new ApiError(400, firstIssueMessage(parsed.error));
+  }
+  const { limit, offset, includeDeleted } = parsed.data;
+  const items = await queries.listPromotionTargets({
+    limit,
+    offset,
+    includeDeleted,
+    promotionId: filters.promotionId,
+  });
   return ok({ items });
 }
 
@@ -72,14 +57,7 @@ async function _postPromotionTargets(request: NextRequest) {
       throw new ApiError(400, firstIssueMessage(parsed.error));
     }
     const { id, ...values } = parsed.data;
-    const [row] = await db
-      .update(promotionTargets)
-      .set(pickDefined(values))
-      .where(eq(promotionTargets.id, id))
-      .returning();
-    if (!row) {
-      throw new ApiError(404, "Promotion target not found");
-    }
+    const row = await queries.updatePromotionTarget(id, pickDefined(values));
     return ok(row);
   }
 
@@ -87,9 +65,6 @@ async function _postPromotionTargets(request: NextRequest) {
   if (!parsed.success) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
-  const [row] = await db
-    .insert(promotionTargets)
-    .values(parsed.data)
-    .returning();
+  const row = await queries.createPromotionTarget(parsed.data);
   return ok(row, 201);
 }

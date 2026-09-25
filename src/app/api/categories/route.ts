@@ -1,14 +1,7 @@
-import { asc, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
-import { db } from "@/db";
-import { categories } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
-import {
-  isUniqueViolation,
-  pickDefined,
-  readJsonBody,
-} from "@/lib/api/request";
+import { pickDefined, readJsonBody } from "@/lib/api/request";
 import { requireAuth } from "@/lib/auth";
 import {
   firstIssueMessage,
@@ -18,16 +11,17 @@ import {
   CategoryCreateSchema,
   CategoryUpdateSchema,
 } from "@/lib/schemas/api/category";
+import * as queries from "@/lib/queries/categories";
 
 export async function GET(request: NextRequest) {
-  return handleErrors(() => _getCategories(request));
+  return handleErrors(() => _categories(request));
 }
 
 export async function POST(request: NextRequest) {
   return handleErrors(() => _postCategories(request));
 }
 
-async function _getCategories(request: NextRequest) {
+async function _categories(request: NextRequest) {
   const parsed = listQuerySchema.safeParse(
     Object.fromEntries(request.nextUrl.searchParams),
   );
@@ -35,15 +29,7 @@ async function _getCategories(request: NextRequest) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
   const { limit, offset, includeDeleted } = parsed.data;
-
-  const items = await db
-    .select()
-    .from(categories)
-    .where(includeDeleted ? undefined : eq(categories.isDeleted, false))
-    .orderBy(asc(categories.sortOrder), asc(categories.id))
-    .limit(limit)
-    .offset(offset);
-
+  const items = await queries.listCategories({ limit, offset, includeDeleted });
   return ok({ items });
 }
 
@@ -59,36 +45,14 @@ async function _postCategories(request: NextRequest) {
       throw new ApiError(400, firstIssueMessage(parsed.error));
     }
     const { id, ...values } = parsed.data;
-    try {
-      const [row] = await db
-        .update(categories)
-        .set({ ...pickDefined(values), updatedAt: new Date() })
-        .where(eq(categories.id, id))
-        .returning();
-      if (!row) {
-        throw new ApiError(404, "Category not found");
-      }
-      return ok(row);
-    } catch (error) {
-      if (error instanceof ApiError) throw error;
-      if (isUniqueViolation(error)) {
-        throw new ApiError(409, "Category with this slug already exists");
-      }
-      throw error;
-    }
+    const row = await queries.updateCategory(id, pickDefined(values));
+    return ok(row);
   }
 
   const parsed = CategoryCreateSchema.safeParse(body);
   if (!parsed.success) {
     throw new ApiError(400, firstIssueMessage(parsed.error));
   }
-  try {
-    const [row] = await db.insert(categories).values(parsed.data).returning();
-    return ok(row, 201);
-  } catch (error) {
-    if (isUniqueViolation(error)) {
-      throw new ApiError(409, "Category with this slug already exists");
-    }
-    throw error;
-  }
+  const row = await queries.createCategory(parsed.data);
+  return ok(row, 201);
 }

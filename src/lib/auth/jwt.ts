@@ -3,6 +3,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 export interface JwtPayload {
   sub: string;
   role: string;
+  email?: string;
   iat?: number;
   exp?: number;
 }
@@ -18,7 +19,7 @@ function getSecret(): string {
   return secret;
 }
 
-function getExpiresInSeconds(): number {
+export function getJwtExpiresInSeconds(): number {
   const value = process.env.JWT_EXPIRES_IN ?? "7d";
   if (value === "0") return 0;
   const match = /^(\d+)\s*(s|m|h|d)$/.exec(value.trim().toLowerCase());
@@ -32,7 +33,7 @@ function getExpiresInSeconds(): number {
 
 export function signJwt(payload: JwtPayload): string {
   const now = Math.floor(Date.now() / 1000);
-  const expiresIn = getExpiresInSeconds();
+  const expiresIn = getJwtExpiresInSeconds();
   const header = { alg: "HS256", typ: "JWT" };
   const body: JwtPayload = {
     ...payload,
@@ -83,6 +84,9 @@ export function verifyJwt(token: string): JwtPayload | null {
   if (header.alg !== "HS256") return null;
   if (typeof payload.sub !== "string" || payload.sub.length === 0) return null;
   if (typeof payload.role !== "string") return null;
+  if (payload.email !== undefined && typeof payload.email !== "string") {
+    return null;
+  }
   if (payload.exp !== undefined && payload.exp < Math.floor(Date.now() / 1000)) {
     return null;
   }

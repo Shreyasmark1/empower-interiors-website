@@ -1,7 +1,5 @@
 "use client"
 
-import { clearSession } from "./auth";
-
 export class AdminApiError extends Error {
   constructor(
     public readonly status: number,
@@ -31,19 +29,13 @@ async function adminFetch<T>(
   if (body !== undefined && !isFormData) {
     headers["Content-Type"] = "application/json";
   }
-  if (auth) {
-    const { getToken } = await import("./auth");
-    const token = getToken();
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-  }
 
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
       method,
       headers,
+      credentials: "same-origin",
       body:
         body === undefined
           ? undefined
@@ -56,7 +48,6 @@ async function adminFetch<T>(
   }
 
   if (response.status === 401 && auth) {
-    clearSession();
     if (typeof window !== "undefined") {
       window.location.replace("/admin/login");
     }

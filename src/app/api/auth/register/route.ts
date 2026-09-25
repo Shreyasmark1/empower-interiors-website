@@ -1,15 +1,14 @@
-import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { db } from "@/db";
-import { users } from "@/db/schema";
 import { ApiError, handleErrors, ok } from "@/lib/api/http";
-import { readJsonBody, isUniqueViolation } from "@/lib/api/request";
-import { getAuthUser } from "@/lib/auth";
-import { signJwt } from "@/lib/auth/jwt";
+import { readJsonBody } from "@/lib/api/request";
+import { getAuthUser, setAuthCookie } from "@/lib/auth";
+import { getJwtExpiresInSeconds, signJwt } from "@/lib/auth/jwt";
 import { hashPassword } from "@/lib/auth/password";
 import { firstIssueMessage } from "@/lib/schemas/api/common";
 import { RegisterSchema } from "@/lib/schemas/api/auth";
+import * as queries from "@/lib/queries/auth";
 
 // Flip to false to re-enable public registration.
 const REGISTRATION_DISABLED: boolean = true;
@@ -35,40 +34,27 @@ async function _postRegister(request: NextRequest) {
 
   const { email, password, role } = parsed.data;
 
-  const existing = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-  if (existing.length > 0) {
-    throw new ApiError(409, "Email is already registered");
-  }
-
   const passwordHash = await hashPassword(password);
-  let user;
-  try {
-    [user] = await db
-      .insert(users)
-      .values({ email, passwordHash, role })
-      .returning();
-  } catch (error) {
-    if (isUniqueViolation(error)) {
-      throw new ApiError(409, "Email is already registered");
-    }
-    throw error;
-  }
+  const user = await queries.createUser({ email, passwordHash, role });
 
-  const token = signJwt({ sub: String(user.id), role: user.role });
+  const token = signJwt({
+    sub: String(user.id),
+    role: user.role,
+    email: user.email,
+  });
+  const maxAge = getJwtExpiresInSeconds();
 
-  return ok(
+  const response = NextResponse.json(
     {
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
       },
     },
-    201,
+    { status: 201 },
   );
+  return setAuthCookie(response, token, maxAge);
 }
