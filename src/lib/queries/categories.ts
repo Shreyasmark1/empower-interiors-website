@@ -1,6 +1,6 @@
 "use server"
 
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/db";
 import { categories } from "@/db/schema";
@@ -25,6 +25,32 @@ export async function listCategories(
     .orderBy(asc(categories.sortOrder), asc(categories.id))
     .limit(limit)
     .offset(offset);
+}
+
+const visibleCategory = and(
+  eq(categories.isDeleted, false),
+  eq(categories.isActive, true),
+);
+
+const categoryOrderBy = [asc(categories.sortOrder), asc(categories.id)];
+
+export async function getCategoryTree() {
+  return db.query.categories.findMany({
+    where: and(isNull(categories.parentId), visibleCategory),
+    orderBy: categoryOrderBy,
+    with: {
+      children: {
+        where: visibleCategory,
+        orderBy: categoryOrderBy,
+        with: {
+          children: {
+            where: visibleCategory,
+            orderBy: categoryOrderBy,
+          },
+        },
+      },
+    },
+  });
 }
 
 export async function getCategoryById(id: number) {
